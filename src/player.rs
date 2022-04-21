@@ -1,55 +1,55 @@
-use crate::actions::Actions;
-use crate::loading::TextureAssets;
-use crate::GameState;
-use bevy::prelude::*;
+use bevy::{prelude::*};
+
+use crate::CharSheet;
 
 pub struct PlayerPlugin;
 
 #[derive(Component)]
 pub struct Player;
 
-/// This plugin handles player related stuff like movement
-/// Player logic is only active during the State `GameState::Playing`
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system_set(
-            SystemSet::on_enter(GameState::Playing)
-                .with_system(spawn_player)
-                .with_system(spawn_camera),
-        )
-        .add_system_set(SystemSet::on_update(GameState::Playing).with_system(move_player));
+        app
+            .add_startup_system(spawn_player)
+            .add_system(player_movement);
     }
 }
 
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
-}
-
-fn spawn_player(mut commands: Commands, textures: Res<TextureAssets>) {
-    commands
-        .spawn_bundle(SpriteBundle {
-            texture: textures.texture_bevy.clone(),
-            transform: Transform::from_translation(Vec3::new(0., 0., 1.)),
-            ..Default::default()
-        })
-        .insert(Player);
-}
-
-fn move_player(
-    time: Res<Time>,
-    actions: Res<Actions>,
-    mut player_query: Query<&mut Transform, With<Player>>,
+fn player_movement(
+    mut player_query: Query<(&Player, &mut Transform)>,
+    keyboard: Res<Input<KeyCode>>,
 ) {
-    if actions.player_movement.is_none() {
-        return;
+    // a pattern matching let
+    let (_player, mut transform) = player_query.single_mut();
+
+    if keyboard.pressed(KeyCode::W) {
+        transform.translation.y += 0.5;
     }
-    let speed = 150.;
-    let movement = Vec3::new(
-        actions.player_movement.unwrap().x * speed * time.delta_seconds(),
-        actions.player_movement.unwrap().y * speed * time.delta_seconds(),
-        0.,
-    );
-    for mut player_transform in player_query.iter_mut() {
-        player_transform.translation += movement;
+    if keyboard.pressed(KeyCode::S) {
+        transform.translation.y -= 0.5;
     }
+    if keyboard.pressed(KeyCode::A) {
+        transform.translation.x -= 0.5;
+    }
+    if keyboard.pressed(KeyCode::D) {
+        transform.translation.x  += 0.5;
+    }
+}
+
+fn spawn_player(mut commands: Commands, character: Res<CharSheet>){
+    let mut sprite = TextureAtlasSprite::new(0);
+    // of x and y are both 1, sprite is squashed
+    sprite.custom_size = Some(Vec2::new(1.0, 2.0));
+
+    commands.spawn_bundle(SpriteSheetBundle {
+        sprite: sprite,
+        texture_atlas: character.0.clone(),
+        transform: Transform{ 
+            translation: Vec3::new(0.0, 0.0, 900.0),
+            ..Default::default()
+        },
+        ..Default::default()
+    })
+    .insert(Name::new("Player"))
+    .insert(Player);
 }
