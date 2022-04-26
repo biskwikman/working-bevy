@@ -14,3 +14,4 @@ opt-level = 1
 # Remove dynamic when shipping
 [dependencies]
 bevy = { version = "0.7", features = ["dynamic"]}
+bevy-inspector-egui = "0.10"
