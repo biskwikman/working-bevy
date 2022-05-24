@@ -1,7 +1,7 @@
 use bevy::{prelude::*};
 use bevy_inspector_egui::Inspectable;
 
-use crate::CharSheet;
+use crate::textures::CharSheet;
 use crate::TILE_SIZE;
 use crate::textures::spawn_textures_sprite;
 

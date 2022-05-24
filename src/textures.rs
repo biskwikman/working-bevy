@@ -4,7 +4,9 @@ use crate::TILE_SIZE;
 
 pub struct TexturesPlugin;
 
-pub struct CharSheet(Handle<TextureAtlas>);
+pub struct CharSheet(pub Handle<TextureAtlas>); 
+
+pub struct AsciiSheet(pub Handle<TextureAtlas>);
 
 impl Plugin for TexturesPlugin {
     fn build(&self, app: &mut App) {
@@ -38,15 +40,26 @@ fn load_textures(
     assets: Res<AssetServer>,
     mut texture_atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let image = assets.load("textures/main-char-sheet.png");
-    let atlas = TextureAtlas::from_grid(
-        image, 
+    let char_image = assets.load("textures/main-char-sheet.png");
+    let ascii_image = assets.load("textures/ascii-sheet.png");
+
+    let char_atlas = TextureAtlas::from_grid(
+        char_image, 
         Vec2::new(32.0, 64.0), 
         10, 
         1, 
     );
 
-    let atlas_handle = texture_atlases.add(atlas);
+    let ascii_atlas = TextureAtlas::from_grid(
+        ascii_image,
+        Vec2::new(16.0, 16.0),
+        16,
+        16,
+    );
 
-    commands.insert_resource(CharSheet(atlas_handle));
+    let char_atlas_handle = texture_atlases.add(char_atlas);
+    let ascii_atlas_handle = texture_atlases.add(ascii_atlas);
+
+    commands.insert_resource(CharSheet(char_atlas_handle));
+    commands.insert_resource(CharSheet(ascii_atlas_handle));
 }
