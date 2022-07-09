@@ -1,12 +1,9 @@
 use bevy::prelude::*;
 
 use crate::TILE_SIZE;
+use crate::components::textures::*;
 
 pub struct TexturesPlugin;
-
-pub struct CharSheet(pub Handle<TextureAtlas>); 
-
-pub struct AsciiSheet(pub Handle<TextureAtlas>);
 
 impl Plugin for TexturesPlugin {
     fn build(&self, app: &mut App) {
@@ -17,6 +14,27 @@ impl Plugin for TexturesPlugin {
 pub fn spawn_textures_sprite(
     commands: &mut Commands,
     textures: &CharSheet,
+    index: usize,
+    translation: Vec3,
+) -> Entity {
+    let mut sprite = TextureAtlasSprite::new(index);
+    sprite.custom_size = Some(Vec2::new(TILE_SIZE, TILE_SIZE * 2.0));
+
+    commands
+        .spawn_bundle(SpriteSheetBundle {
+            sprite: sprite,
+            texture_atlas: textures.0.clone(),
+            transform: Transform{ 
+                translation: translation,
+                ..default()
+            },
+            ..default()
+        }).id()
+}
+
+pub fn spawn_textures_map(
+    commands: &mut Commands,
+    textures: &AsciiSheet,
     index: usize,
     translation: Vec3,
 ) -> Entity {
@@ -44,10 +62,10 @@ fn load_textures(
     let ascii_image = assets.load("textures/ascii-sheet.png");
 
     let char_atlas = TextureAtlas::from_grid(
-        char_image, 
-        Vec2::new(32.0, 64.0), 
-        10, 
-        1, 
+        char_image,
+        Vec2::new(32.0, 48.0),
+        10,
+        1,
     );
 
     let ascii_atlas = TextureAtlas::from_grid(
@@ -61,5 +79,5 @@ fn load_textures(
     let ascii_atlas_handle = texture_atlases.add(ascii_atlas);
 
     commands.insert_resource(CharSheet(char_atlas_handle));
-    commands.insert_resource(CharSheet(ascii_atlas_handle));
+    commands.insert_resource(AsciiSheet(ascii_atlas_handle));
 }

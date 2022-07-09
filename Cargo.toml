@@ -15,3 +15,4 @@ opt-level = 1
 [dependencies]
 bevy = { version = "0.7", features = ["dynamic"]}
 bevy-inspector-egui = "0.10"
+leafwing-input-manager = "0.4.0"
