@@ -3,10 +3,9 @@ use leafwing_input_manager::prelude::*;
 use leafwing_input_manager::{errors::NearlySingularConversion, orientation::Direction};
 
 use crate::components::player::*;
-// use crate::components::input::*;
-use crate::components::textures::CharSheet;
+use crate::components::textures::GraphicsHandles;
+use crate::systems::input::default_input_map;
 use crate::TILE_SIZE;
-use crate::systems::textures::spawn_textures_sprite;
 
 pub struct PlayerPlugin;
 
@@ -18,55 +17,13 @@ impl Plugin for PlayerPlugin {
             .add_startup_system(spawn_player)
             .add_event::<PlayerWalk>()
             .add_system(player_walks)
-            .add_system(player_movement.after(player_walks))
-            .add_system(player_animation.after(player_walks));
+            .add_system(move_player.after(player_walks))
+            .add_system(face_player.after(player_walks))
+            .add_system(set_player_is_moving.after(move_player));
     }
 }
 
-// #[derive(Bundle)]
-// struct PlayerBundle {
-//     player: Player,
-//     #[bundle]
-//     input_manager: InputManagerBundle<Action>
-// }
-
-impl PlayerBundle {
-    fn default_input_map() -> InputMap<Action> {
-        use Action::*;
-        let mut input_map = InputMap::default();
-
-        // This is a quick and hacky solution:
-        // you should coordinate with the `Gamepads` resource to determine the correct gamepad for each player
-        // and gracefully handle disconnects
-        input_map.set_gamepad(Gamepad(0));
-
-        // Movement
-        input_map.insert(KeyCode::Up, Up);
-        input_map.insert(KeyCode::W, Up);
-        input_map.insert(GamepadButtonType::DPadUp, Up);
-
-
-        input_map.insert(KeyCode::Down, Down);
-        input_map.insert(KeyCode::S, Down);
-        input_map.insert(GamepadButtonType::DPadDown, Down);
-
-        input_map.insert(KeyCode::Left, Left);
-        input_map.insert(KeyCode::A, Left);
-        input_map.insert(GamepadButtonType::DPadLeft, Left);
-
-        input_map.insert(KeyCode::Right, Right);
-        input_map.insert(KeyCode::D, Right);
-        input_map.insert(GamepadButtonType::DPadRight, Right);
-
-        // Abilities
-        input_map.insert(KeyCode::F, Interact);
-        input_map.insert(GamepadButtonType::East, Interact);
-
-        input_map
-    }
-}
-
-fn player_movement(
+fn move_player(
     mut player_query: Query<(&Player, &mut Transform)>,
     mut event_reader: EventReader<PlayerWalk>,
     time: Res<Time>,
@@ -78,96 +35,79 @@ fn player_movement(
     }
 }
 
-#[derive(Component, Deref, DerefMut)]
-struct AnimationTimer(Timer);
-
-fn player_animation(
-    time: Res<Time>,
+fn face_player(
     mut event_reader: EventReader<PlayerWalk>,
-    mut player_query: Query<(
-        &mut AnimationTimer,
-        &mut TextureAtlasSprite,
-    )>,
+    mut player_query: Query<&mut Player>,
 ) {
-    let (
-        mut timer, 
-        mut sprite, 
-    ) = player_query.single_mut();
+    let mut player = player_query.single_mut();
 
     for ev in event_reader.iter() {
         let x = ev.direction.unit_vector()[0];
         let y = ev.direction.unit_vector()[1];
 
-        //up animation
         if y > 0.0 && x == 0.0 {
-            timer.tick(time.delta());
-            if timer.just_finished() {
-                if sprite.index != 8 {
-                    sprite.index = 8;
-                }
-                else if sprite.index == 8 {
-                    sprite.index = 9;
-                }
-            }
+            player.current_direction = FacingDirection::Up;
         }
-        //down animation
         if y < 0.0 && x == 0.0 {
-            timer.tick(time.delta());
-            if timer.just_finished() {
-                if sprite.index != 1 {
-                    sprite.index = 1;
-                }
-                else if sprite.index == 1 {
-                    sprite.index = 2;
-                }
-            }
+            player.current_direction = FacingDirection::Down;
         }
-        //left animation
         if x < 0.0 {
-            timer.tick(time.delta());
-            if timer.just_finished() {
-                if sprite.index != 5 {
-                    sprite.index = 5;
-                }
-                else if sprite.index == 5 {
-                    sprite.index = 6;
-                }
-            }
+            player.current_direction = FacingDirection::Left;
         }
-        //right animation
         if x > 0.0 {
-            timer.tick(time.delta());
-            if timer.just_finished() {
-                if sprite.index != 3 {
-                    sprite.index = 3;
-                }
-                else if sprite.index == 3 {
-                    sprite.index = 4;
-                }
-            }
+            player.current_direction = FacingDirection::Right;
         }
     }
 }
 
-fn spawn_player(mut commands: Commands, character: Res<CharSheet>) {
-    let player_ent = spawn_textures_sprite(
-        &mut commands,
-        &character,
-        0,
-        Vec3::new(0.0, 0.0, 900.0),
-    );
+fn set_player_is_moving(mut player_query: Query<(&mut Player, ChangeTrackers<Transform>)>)
+    {
+    for (mut player, trackers) in player_query.iter_mut() {
+        if trackers.is_changed() {
+            player.is_moving = true;
+        } else {
+            player.is_moving = false;
+        }
+        
+        println!("{:?}", player.is_moving);
+    }
+}
+
+fn spawn_player(
+    mut commands: Commands, 
+    graphics: Res<GraphicsHandles>,
+    animations: Res<PlayerAnimations>, 
+) {
+    let mut sprite = TextureAtlasSprite::new(animations.walk_down[0]);
+    sprite.custom_size = Some(Vec2::new(0.3, 0.45));
 
     commands
-        .entity(player_ent)
-        .insert_bundle(PlayerBundle {
-            player: Player { speed: PLAYER_SPEED },
-            input_manager: InputManagerBundle {
-                input_map: PlayerBundle::default_input_map(),
-                action_state: ActionState::default(),
-            }
+        .spawn_bundle(SpriteSheetBundle {
+            sprite,
+            texture_atlas: graphics.characters.clone(),
+            transform: Transform {
+                translation: Vec3::new(0.0, 0.0, 900.0),
+                ..default()
+            },
+            ..default()
         })
         .insert(Name::new("Player"))
-        .insert(AnimationTimer(Timer::from_seconds(0.1, true)));
+        .insert(Player {
+            speed: PLAYER_SPEED,
+            current_direction: FacingDirection::Down,
+            hitbox_size: 32.0,
+            is_moving: false,
+            just_moved: false,
+            active: true,
+        })
+        .insert_bundle(InputManagerBundle {
+            input_map: default_input_map(),
+            action_state: ActionState::default(),
+        })
+        .insert(AnimatedSprite {
+            current_frame: 0,
+            timer: (Timer::from_seconds(0.1, true))
+        });
 }
 
 fn player_walks(

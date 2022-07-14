@@ -1,9 +1,13 @@
 use bevy::prelude::*;
 use bevy_inspector_egui::{Inspectable, RegisterInspectable};
-use std::{fs::File, io::{BufReader, BufRead}};
+use std::{fs::File, io::{BufReader, BufRead}, collections::VecDeque};
+use std::path::Path;
 
-use crate::systems::textures::spawn_textures_map;
-use crate::components::textures::AsciiSheet;
+use crate::systems::debug::ENABLE_INSPECTOR;
+use crate::components::textures::GraphicsHandles;
+use crate::components::player::Player;
+use crate::systems::fadeout::fadeout;
+use crate::systems::fadeout::ScreenFade;
 use crate::TILE_SIZE;
 
 #[derive(Component)]
@@ -37,12 +41,12 @@ impl Plugin for TileMapPlugin {
         app.add_event::<ExitEvent>()
             .add_system(load_exit)
             .add_system(fadeout::<ExitEvent>)
-            .add_startup_system(spawn_sample_map)
-            .add_system_set(SystemSet::on_exit(GameState::Overworld).with_system(hide_map))
-            .add_system_set(SystemSet::on_enter(GameState::Overworld).with_system(show_map));
-        if ENABLE_INSPECTOR {
-            app.register_inspectable::<ScreenFade<ExitEvent>>();
-        }
+            .add_startup_system(spawn_sample_map);
+        //     .add_system_set(SystemSet::on_exit(GameState::Overworld).with_system(hide_map))
+        //     .add_system_set(SystemSet::on_enter(GameState::Overworld).with_system(show_map));
+        // if ENABLE_INSPECTOR {
+        //     app.register_inspectable::<ScreenFade<ExitEvent>>();
+        // }
     }
 }
 
@@ -65,7 +69,7 @@ fn hide_map(mut map_query: Query<&Children, With<Map>>, mut child_query: Query<&
 }
 
 fn spawn_sample_map(commands: Commands, graphics: Res<GraphicsHandles>) {
-    load_map(commands, graphics, Path::new("assets/map.txt"));
+    load_map(commands, graphics, Path::new("assets/maps/map.txt"));
 }
 
 fn load_exit(

@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
-pub struct CharSheet(pub Handle<TextureAtlas>); 
-
-pub struct AsciiSheet(pub Handle<TextureAtlas>);
+pub struct GraphicsHandles {
+    pub characters: Handle<TextureAtlas>,
+    pub tiles: Handle<TextureAtlas>,
+}

@@ -5,11 +5,12 @@ use bevy::window::PresentMode;
 mod components;
 mod systems;
 
+use systems::graphics::GraphicsPlugin;
 use systems::player::PlayerPlugin;
 use systems::camera::spawn_camera;
 use systems::debug::DebugPlugin;
 use systems::input::InputPlugin;
-use systems::textures::TexturesPlugin;
+use systems::ascii::AsciiPlugin;
 use systems::tilemap::TileMapPlugin;
 
 pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
@@ -29,23 +30,10 @@ fn main() {
         .add_startup_system(spawn_camera)
         .add_plugins(DefaultPlugins)
         .add_plugin(PlayerPlugin)
-        .add_plugin(TexturesPlugin)
+        .add_plugin(AsciiPlugin)
         .add_plugin(DebugPlugin)
         .add_plugin(TileMapPlugin)
         .add_plugin(InputPlugin)
+        .add_plugin(GraphicsPlugin)
         .run();
 }
-
-// fn spawn_camera(mut commands: Commands) {
-//     let mut camera = OrthographicCameraBundle::new_2d();
-
-//     camera.orthographic_projection.top = 1.0;
-//     camera.orthographic_projection.bottom = -1.0;
-
-//     camera.orthographic_projection.right = 1.0 * RESOLUTION;
-//     camera.orthographic_projection.left = -1.0 * RESOLUTION;
-
-//     camera.orthographic_projection.scaling_mode = ScalingMode::None;
-
-//     commands.spawn_bundle(camera);
-// }
