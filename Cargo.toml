@@ -13,6 +13,6 @@ opt-level = 1
 
 # Remove dynamic when shipping
 [dependencies]
-bevy = { version = "0.7", features = ["dynamic"]}
-bevy-inspector-egui = "0.10"
-leafwing-input-manager = "0.4.0"
+bevy = { version = "0.8", features = ["dynamic"]}
+bevy-inspector-egui = "0.12"
+leafwing-input-manager = "0.5.2"

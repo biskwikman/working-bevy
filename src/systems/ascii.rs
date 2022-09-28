@@ -26,14 +26,15 @@ pub fn spawn_ascii_sprite(
 
     commands
         .spawn_bundle(SpriteSheetBundle {
-            sprite: sprite,
+            sprite,
             texture_atlas: textures.0.clone(),
-            transform: Transform{ 
-                translation: translation,
+            transform: Transform {
+                translation,
                 ..default()
             },
             ..default()
-        }).id()
+        })
+        .id()
 }
 
 fn load_ascii(
@@ -51,12 +52,7 @@ fn load_ascii(
     //     1,
     // );
 
-    let ascii_atlas = TextureAtlas::from_grid(
-        ascii_image,
-        Vec2::new(16.0, 16.0),
-        16,
-        16,
-    );
+    let ascii_atlas = TextureAtlas::from_grid(ascii_image, Vec2::new(16.0, 16.0), 16, 16);
 
     // let char_atlas_handle = texture_atlases.add(char_atlas);
     let ascii_atlas_handle = texture_atlases.add(ascii_atlas);
@@ -64,3 +60,4 @@ fn load_ascii(
     // commands.insert_resource(CharSheet(char_atlas_handle));
     commands.insert_resource(AsciiSheet(ascii_atlas_handle));
 }
+

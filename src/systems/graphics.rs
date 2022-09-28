@@ -25,12 +25,16 @@ fn load_graphics(
 ) {
     let image = assets.load("textures/main-char-sheet.png");
     let atlas =
-        TextureAtlas::from_grid_with_padding(image, Vec2::new(32.0, 48.0), 10, 1, Vec2::splat(0.0));
+        TextureAtlas::from_grid_with_padding(
+            image, Vec2::new(32.0, 48.0), 10, 1, Vec2::splat(0.0), Vec2::ZERO
+        );
     let character_handle = atlases.add(atlas);
 
     let image = assets.load("tiles/basictiles.png");
     let atlas =
-        TextureAtlas::from_grid_with_padding(image, Vec2::splat(16.0), 8, 15, Vec2::splat(2.0));
+        TextureAtlas::from_grid_with_padding(
+            image, Vec2::splat(16.0), 8, 15, Vec2::splat(2.0), Vec2::ZERO
+        );
     let tile_handle = atlases.add(atlas);
 
     commands.insert_resource(GraphicsHandles {
@@ -67,32 +71,31 @@ fn animate_player(
     animations: Res<PlayerAnimations>,
 ) {
     let (mut sprite, animated_sprite, player) = player_query.single_mut();
-    //FIXME clean this up
     let current_frame = animated_sprite.current_frame;
     match player.current_direction {
         FacingDirection::Up => {
-            if player.is_moving == true {
+            if player.is_moving {
                 sprite.index = animations.walk_up[current_frame % animations.walk_up.len()];
             } else {
                 sprite.index = animations.face_up[0];
             }
         }
         FacingDirection::Down => {
-            if player.is_moving == true {
+            if player.is_moving {
                 sprite.index = animations.walk_down[current_frame % animations.walk_down.len()];
             } else {
                 sprite.index = animations.face_down[0];
             }
         }
         FacingDirection::Left => {
-            if player.is_moving == true {
+            if player.is_moving {
                 sprite.index = animations.walk_left[current_frame % animations.walk_left.len()];
             } else {
                 sprite.index = animations.face_left[0];
             }
         }
         FacingDirection::Right => {
-            if player.is_moving == true {
+            if player.is_moving {
                 sprite.index = animations.walk_right[current_frame % animations.walk_right.len()];
             } else {
                 sprite.index = animations.face_right[0];

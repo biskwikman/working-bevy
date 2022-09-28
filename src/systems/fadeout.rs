@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+// use bevy_inspector_egui::Inspectable;
 
 use crate::{
     systems::ascii::{spawn_ascii_sprite, AsciiSheet},
@@ -35,7 +36,7 @@ pub fn create_fadeout<T: 'static + std::marker::Send + std::marker::Sync + Clone
             alpha: 0.0,
             sent: false,
             timer: Timer::from_seconds(fade_time, false),
-            event: event,
+            event,
         })
         .insert(Name::new("Fadeout"));
 }

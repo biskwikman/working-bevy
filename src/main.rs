@@ -1,5 +1,6 @@
 #![allow(clippy::redundant_field_names)]
 use bevy::prelude::*;
+use bevy::render::texture::ImageSettings;
 use bevy::window::PresentMode;
 
 mod components;
@@ -16,8 +17,16 @@ use systems::tilemap::TileMapPlugin;
 pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
 pub const TILE_SIZE: f32 = 0.2;
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
+pub enum GameState {
+    StartMenu,
+    Overworld,
+    Combat,
+}
+
 fn main() {
     App::new()
+        .insert_resource(ImageSettings::default_nearest())
         .insert_resource(ClearColor(CLEAR))
         .insert_resource(WindowDescriptor {
             width: 1600.0,

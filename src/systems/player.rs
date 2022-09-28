@@ -68,8 +68,6 @@ fn set_player_is_moving(mut player_query: Query<(&mut Player, ChangeTrackers<Tra
         } else {
             player.is_moving = false;
         }
-        
-        println!("{:?}", player.is_moving);
     }
 }
 

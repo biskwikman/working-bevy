@@ -1,6 +1,6 @@
-use bevy::{prelude::*};
+use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
-use leafwing_input_manager::{orientation::Direction};
+use leafwing_input_manager::orientation::Direction;
 
 use crate::components::player::*;
 
@@ -40,7 +40,7 @@ pub fn default_input_map() -> InputMap<Action> {
     // This is a quick and hacky solution:
     // you should coordinate with the `Gamepads` resource to determine the correct gamepad for each player
     // and gracefully handle disconnects
-    input_map.set_gamepad(Gamepad(0));
+    // input_map.set_gamepad(Gamepad(0));
 
     // Movement
     input_map.insert(KeyCode::Up, Up);

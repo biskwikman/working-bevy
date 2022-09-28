@@ -9,6 +9,7 @@ use crate::components::player::Player;
 use crate::systems::fadeout::fadeout;
 use crate::systems::fadeout::ScreenFade;
 use crate::TILE_SIZE;
+use crate::GameState;
 
 #[derive(Component)]
 pub struct Tile;
@@ -41,9 +42,9 @@ impl Plugin for TileMapPlugin {
         app.add_event::<ExitEvent>()
             .add_system(load_exit)
             .add_system(fadeout::<ExitEvent>)
-            .add_startup_system(spawn_sample_map);
-        //     .add_system_set(SystemSet::on_exit(GameState::Overworld).with_system(hide_map))
-        //     .add_system_set(SystemSet::on_enter(GameState::Overworld).with_system(show_map));
+            .add_startup_system(spawn_sample_map)
+            .add_system_set(SystemSet::on_exit(GameState::Overworld).with_system(hide_map))
+            .add_system_set(SystemSet::on_enter(GameState::Overworld).with_system(show_map));
         // if ENABLE_INSPECTOR {
         //     app.register_inspectable::<ScreenFade<ExitEvent>>();
         // }

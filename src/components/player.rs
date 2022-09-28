@@ -41,7 +41,7 @@ pub struct AnimatedSprite {
     pub timer: Timer,
 }
 
-#[derive(Actionlike, PartialEq, Clone, Copy, Inspectable, Debug)]
+#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Inspectable, Debug)]
 pub enum Action {
     // Movement
     Up,
