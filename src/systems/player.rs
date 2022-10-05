@@ -77,7 +77,7 @@ fn spawn_player(
     animations: Res<PlayerAnimations>, 
 ) {
     let mut sprite = TextureAtlasSprite::new(animations.walk_down[0]);
-    sprite.custom_size = Some(Vec2::new(0.3, 0.45));
+    sprite.custom_size = Some(Vec2::new(0.6, 0.9));
 
     commands
         .spawn_bundle(SpriteSheetBundle {

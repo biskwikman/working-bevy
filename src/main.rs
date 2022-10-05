@@ -2,6 +2,7 @@
 use bevy::prelude::*;
 use bevy::render::texture::ImageSettings;
 use bevy::window::PresentMode;
+use bevy_ecs_ldtk::prelude::*;
 
 mod components;
 mod systems;
@@ -11,7 +12,7 @@ use systems::player::PlayerPlugin;
 use systems::camera::spawn_camera;
 use systems::debug::DebugPlugin;
 use systems::input::InputPlugin;
-use systems::ascii::AsciiPlugin;
+// use systems::ascii::AsciiPlugin;
 use systems::tilemap::TileMapPlugin;
 
 pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
@@ -37,12 +38,23 @@ fn main() {
             ..Default::default()
         })
         .add_startup_system(spawn_camera)
+        .add_startup_system(setup)
         .add_plugins(DefaultPlugins)
+        .add_plugin(LdtkPlugin)
+        .insert_resource(LevelSelection::Index(0))
         .add_plugin(PlayerPlugin)
-        .add_plugin(AsciiPlugin)
         .add_plugin(DebugPlugin)
-        .add_plugin(TileMapPlugin)
+        // .add_plugin(TileMapPlugin)
         .add_plugin(InputPlugin)
         .add_plugin(GraphicsPlugin)
         .run();
+}
+
+fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
+    // commands.spawn_bundle(Camera2dBundle::default());
+
+    commands.spawn_bundle(LdtkWorldBundle {
+        ldtk_handle: asset_server.load("ldtk/my_project.ldtk"),
+        ..Default::default()
+    });
 }
