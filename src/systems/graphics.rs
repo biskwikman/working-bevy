@@ -23,12 +23,21 @@ fn load_graphics(
     assets: Res<AssetServer>,
     mut atlases: ResMut<Assets<TextureAtlas>>,
 ) {
-    let image = assets.load("textures/main-char-sheet.png");
-    let atlas =
+    // Load main char sheet
+    let main_char_sheet = assets.load("textures/main-char-sheet.png");
+    let main_char_atlas =
         TextureAtlas::from_grid_with_padding(
-            image, Vec2::new(32.0, 48.0), 10, 1, Vec2::splat(0.0), Vec2::ZERO
+            main_char_sheet, Vec2::new(32.0, 48.0), 10, 1, Vec2::splat(0.0), Vec2::ZERO
         );
-    let character_handle = atlases.add(atlas);
+    let character_handle = atlases.add(main_char_atlas);
+
+    // Load Npc sheet
+    let npc_sheet = assets.load("textures/talker-front.png");
+    let npc_atlas = 
+        TextureAtlas::from_grid_with_padding(
+        npc_sheet, Vec2::new(32.0, 48.0), 10, 1, Vec2::splat(0.0), Vec2::ZERO
+    );
+    let npc_handle = atlases.add(npc_atlas);
 
     let image = assets.load("tiles/basictiles.png");
     let atlas =
@@ -39,6 +48,7 @@ fn load_graphics(
 
     commands.insert_resource(GraphicsHandles {
         characters: character_handle,
+        npcs: npc_handle,
         tiles: tile_handle,
     });
 

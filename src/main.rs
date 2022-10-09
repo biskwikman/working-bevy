@@ -9,11 +9,10 @@ mod systems;
 
 use systems::graphics::GraphicsPlugin;
 use systems::player::PlayerPlugin;
-use systems::camera::spawn_camera;
+use systems::camera::CameraPlugin;
 use systems::debug::DebugPlugin;
 use systems::input::InputPlugin;
 // use systems::ascii::AsciiPlugin;
-use systems::tilemap::TileMapPlugin;
 
 pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
 pub const TILE_SIZE: f32 = 0.2;
@@ -37,7 +36,7 @@ fn main() {
             resizable: false,
             ..Default::default()
         })
-        .add_startup_system(spawn_camera)
+        .add_plugin(CameraPlugin)
         .add_startup_system(setup)
         .add_plugins(DefaultPlugins)
         .add_plugin(LdtkPlugin)
