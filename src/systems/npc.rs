@@ -9,17 +9,23 @@ pub struct NpcPlugin;
 
 impl Plugin for NpcPlugin {
     fn build(&self, app: &mut App) {
-        
+        app.add_startup_system(spawn_npc);
     }
 }
 
 fn spawn_npc (
     mut commands: Commands,
-    graphics: GraphicsHandles, 
+    graphics: Res<GraphicsHandles>,
 ) {
-    let mut sprite = TextureAtlasSprite { color: (), index: (), flip_x: (), flip_y: (), custom_size: (), anchor: () };
     commands
-        .spawn_bundle(SpriteSheetBundle {
-            sprite,
+        .spawn_bundle(SpriteBundle {
+            texture: graphics.npcs.clone(),
+            transform: Transform {
+                translation: Vec3::new(5.0, 0.0, 900.0),
+                ..default()
+            },
+            ..default()
         })
+        .insert(Name::new("Talker"))
+        .insert(Npc);
 }

@@ -12,6 +12,7 @@ use systems::player::PlayerPlugin;
 use systems::camera::CameraPlugin;
 use systems::debug::DebugPlugin;
 use systems::input::InputPlugin;
+use systems::npc::NpcPlugin;
 // use systems::ascii::AsciiPlugin;
 
 pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
@@ -42,6 +43,7 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .insert_resource(LevelSelection::Index(0))
         .add_plugin(PlayerPlugin)
+        .add_plugin(NpcPlugin)
         .add_plugin(DebugPlugin)
         // .add_plugin(TileMapPlugin)
         .add_plugin(InputPlugin)

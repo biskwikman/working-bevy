@@ -19,10 +19,10 @@ pub fn spawn_player_camera(mut commands: Commands) {
     commands
         .spawn_bundle(Camera2dBundle {
             projection: OrthographicProjection {
-                top: 1.0,
-                bottom: -1.0,
-                right: 1.0 * RESOLUTION,
-                left: -1.0 * RESOLUTION,
+                top: 40.0,
+                bottom: -40.0,
+                right: 40.0 * RESOLUTION,
+                left: -40.0 * RESOLUTION,
                 scaling_mode: ScalingMode::None,
                 ..default()
             },

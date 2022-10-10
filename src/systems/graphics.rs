@@ -32,12 +32,12 @@ fn load_graphics(
     let character_handle = atlases.add(main_char_atlas);
 
     // Load Npc sheet
-    let npc_sheet = assets.load("textures/talker-front.png");
-    let npc_atlas = 
-        TextureAtlas::from_grid_with_padding(
-        npc_sheet, Vec2::new(32.0, 48.0), 10, 1, Vec2::splat(0.0), Vec2::ZERO
-    );
-    let npc_handle = atlases.add(npc_atlas);
+    let npc_image = assets.load("textures/talker-front.png");
+    // let npc_atlas = 
+    //     TextureAtlas::from_grid_with_padding(
+    //     npc_sheet, Vec2::new(32.0, 48.0), 10, 1, Vec2::splat(0.0), Vec2::ZERO
+    // );
+    // let npc_handle = atlases.add(npc_atlas);
 
     let image = assets.load("tiles/basictiles.png");
     let atlas =
@@ -48,7 +48,7 @@ fn load_graphics(
 
     commands.insert_resource(GraphicsHandles {
         characters: character_handle,
-        npcs: npc_handle,
+        npcs: npc_image,
         tiles: tile_handle,
     });
 

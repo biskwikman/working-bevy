@@ -3,7 +3,7 @@ use leafwing_input_manager::prelude::*;
 use bevy_inspector_egui::Inspectable;
 use leafwing_input_manager::orientation::Direction;
 
-pub const PLAYER_SPEED: f32 = 5.0;
+pub const PLAYER_SPEED: f32 = 200.0;
 
 #[derive(Component, Inspectable, Debug)]
 pub struct Player {
