@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 
+use crate::components::collision::Collider;
 use crate::components::textures::GraphicsHandles;
-
-#[derive(Component, Debug)]
-pub struct Npc;
+use crate::components::npc::Npc;
+use crate::systems::graphics::YSort;
 
 pub struct NpcPlugin;
 
@@ -27,5 +27,7 @@ fn spawn_npc (
             ..default()
         })
         .insert(Name::new("Talker"))
-        .insert(Npc);
+        .insert(Npc)
+        .insert(YSort(300.0))
+        .insert(Collider);
 }

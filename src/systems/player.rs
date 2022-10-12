@@ -2,9 +2,11 @@ use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 use leafwing_input_manager::{errors::NearlySingularConversion, orientation::Direction};
 
+use crate::components::collision::Collider;
 use crate::components::player::*;
 use crate::components::textures::GraphicsHandles;
 use crate::systems::input::default_input_map;
+use crate::systems::graphics::YSort;
 use crate::TILE_SIZE;
 
 pub struct PlayerPlugin;
@@ -44,6 +46,7 @@ fn face_player(
     for ev in event_reader.iter() {
         let x = ev.direction.unit_vector()[0];
         let y = ev.direction.unit_vector()[1];
+        eprintln!("{},{}", x, y);
 
         if y > 0.0 && x == 0.0 {
             player.current_direction = FacingDirection::Up;
@@ -76,7 +79,7 @@ fn spawn_player(
     graphics: Res<GraphicsHandles>,
     animations: Res<PlayerAnimations>, 
 ) {
-    let mut sprite = TextureAtlasSprite::new(animations.walk_down[0]);
+    let sprite = TextureAtlasSprite::new(animations.walk_down[0]);
     // sprite.custom_size = Some(Vec2::new(0.6, 0.9));
 
     commands
@@ -88,11 +91,11 @@ fn spawn_player(
                 ..default()
             },
             ..default()
-        })
+    })
         .insert(Name::new("Player"))
         .insert(Player {
             speed: PLAYER_SPEED,
-            current_direction: FacingDirection::Down,
+    current_direction: FacingDirection::Down,
             hitbox_size: 32.0,
             is_moving: false,
             just_moved: false,
@@ -105,7 +108,9 @@ fn spawn_player(
         .insert(AnimatedSprite {
             current_frame: 0,
             timer: (Timer::from_seconds(0.1, true))
-        });
+        })
+        .insert(YSort(300.0))
+        .insert(Collider);
 }
 
 fn player_walks(
@@ -127,6 +132,6 @@ fn player_walks(
     let net_direction: Result<Direction, NearlySingularConversion> = direction_vector.try_into();
 
     if let Ok(direction) = net_direction {
-        event_writer.send(PlayerWalk {direction});
+            event_writer.send(PlayerWalk {direction});
     }
 }

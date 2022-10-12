@@ -16,13 +16,14 @@ impl Plugin for CameraPlugin {
 }
 
 pub fn spawn_player_camera(mut commands: Commands) {
+    let camera_view_factor = 50.0;
     commands
         .spawn_bundle(Camera2dBundle {
             projection: OrthographicProjection {
-                top: 40.0,
-                bottom: -40.0,
-                right: 40.0 * RESOLUTION,
-                left: -40.0 * RESOLUTION,
+                top: camera_view_factor,
+                bottom: -camera_view_factor,
+                right: camera_view_factor * RESOLUTION,
+                left: -camera_view_factor * RESOLUTION,
                 scaling_mode: ScalingMode::None,
                 ..default()
             },

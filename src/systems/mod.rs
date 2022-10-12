@@ -5,3 +5,4 @@ pub mod input;
 pub mod player;
 // pub mod tilemap;
 pub mod npc;
+pub mod collision;

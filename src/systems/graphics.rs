@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use crate::components::textures::GraphicsHandles;
-use crate::components::player::{PlayerAnimations, AnimatedSprite, Player, FacingDirection};
+use crate::components::player::{PlayerAnimations, AnimatedSprite, Player, FacingDirection, PlayerWalk};
 
 use super::debug::ENABLE_INSPECTOR;
 
@@ -10,11 +10,23 @@ pub struct GraphicsPlugin;
 impl Plugin for GraphicsPlugin {
     fn build(&self, app: &mut App) {
         app.add_startup_system_to_stage(StartupStage::PreStartup, load_graphics)
+            .add_event::<PlayerWalk>()
             .add_system(animate_player)
-            .add_system(animate_sprites);
+            .add_system(animate_sprites)
+            .add_system(y_sort);
         if ENABLE_INSPECTOR {
             app.register_type::<AnimatedSprite>();
         }
+    }
+}
+
+#[derive(Component, Default, Reflect)]
+#[reflect(Component)]
+pub struct YSort(pub f32);
+
+pub fn y_sort(mut query: Query<(&mut Transform, &YSort)>) {
+    for (mut transform, ysort) in query.iter_mut() {
+        transform.translation.z = ysort.0 - transform.translation.y;
     }
 }
 
@@ -79,36 +91,40 @@ fn animate_sprites(mut sprites: Query<&mut AnimatedSprite>, time: Res<Time>) {
 fn animate_player(
     mut player_query: Query<(&mut TextureAtlasSprite, &AnimatedSprite, &Player)>,
     animations: Res<PlayerAnimations>,
+    mut event_reader: EventReader<PlayerWalk>,
 ) {
     let (mut sprite, animated_sprite, player) = player_query.single_mut();
     let current_frame = animated_sprite.current_frame;
-    match player.current_direction {
-        FacingDirection::Up => {
-            if player.is_moving {
-                sprite.index = animations.walk_up[current_frame % animations.walk_up.len()];
-            } else {
-                sprite.index = animations.face_up[0];
+    let mut ev = event_reader.iter().peekable();
+    if ev.peek().is_some() {
+        match player.current_direction {
+            FacingDirection::Up => {
+                if player.is_moving {
+                    sprite.index = animations.walk_up[current_frame % animations.walk_up.len()];
+                } else {
+                    sprite.index = animations.face_up[0];
+                }
             }
-        }
-        FacingDirection::Down => {
-            if player.is_moving {
-                sprite.index = animations.walk_down[current_frame % animations.walk_down.len()];
-            } else {
-                sprite.index = animations.face_down[0];
+            FacingDirection::Down => {
+                if player.is_moving {
+                    sprite.index = animations.walk_down[current_frame % animations.walk_down.len()];
+                } else {
+                    sprite.index = animations.face_down[0];
+                }
             }
-        }
-        FacingDirection::Left => {
-            if player.is_moving {
-                sprite.index = animations.walk_left[current_frame % animations.walk_left.len()];
-            } else {
-                sprite.index = animations.face_left[0];
+            FacingDirection::Left => {
+                if player.is_moving {
+                    sprite.index = animations.walk_left[current_frame % animations.walk_left.len()];
+                } else {
+                    sprite.index = animations.face_left[0];
+                }
             }
-        }
-        FacingDirection::Right => {
-            if player.is_moving {
-                sprite.index = animations.walk_right[current_frame % animations.walk_right.len()];
-            } else {
-                sprite.index = animations.face_right[0];
+            FacingDirection::Right => {
+                if player.is_moving {
+                    sprite.index = animations.walk_right[current_frame % animations.walk_right.len()];
+                } else {
+                    sprite.index = animations.face_right[0];
+                }
             }
         }
     }
