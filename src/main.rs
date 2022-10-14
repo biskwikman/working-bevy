@@ -13,6 +13,7 @@ use systems::camera::CameraPlugin;
 use systems::debug::DebugPlugin;
 use systems::input::InputPlugin;
 use systems::npc::NpcPlugin;
+use systems::collision::CollidePlugin;
 // use systems::ascii::AsciiPlugin;
 
 pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
@@ -48,6 +49,7 @@ fn main() {
         // .add_plugin(TileMapPlugin)
         .add_plugin(InputPlugin)
         .add_plugin(GraphicsPlugin)
+        .add_plugin(CollidePlugin)
         .run();
 }
 

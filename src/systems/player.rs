@@ -46,7 +46,6 @@ fn face_player(
     for ev in event_reader.iter() {
         let x = ev.direction.unit_vector()[0];
         let y = ev.direction.unit_vector()[1];
-        eprintln!("{},{}", x, y);
 
         if y > 0.0 && x == 0.0 {
             player.current_direction = FacingDirection::Up;
