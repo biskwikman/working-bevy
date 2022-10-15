@@ -1,10 +1,12 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
 use leafwing_input_manager::{errors::NearlySingularConversion, orientation::Direction};
+use bevy_rapier2d::prelude::*;
 
-use crate::components::collision::Collider;
+// use crate::components::collision::Collider;
 use crate::components::player::*;
 use crate::components::textures::GraphicsHandles;
+// use crate::components::collision::CollisionEvent;
 use crate::systems::input::default_input_map;
 use crate::systems::graphics::YSort;
 use crate::TILE_SIZE;
@@ -86,7 +88,7 @@ fn spawn_player(
             sprite,
             texture_atlas: graphics.characters.clone(),
             transform: Transform {
-                translation: Vec3::new(0.0, 0.0, 900.0),
+                translation: Vec3::new(-30.0, 0.0, 900.0),
                 ..default()
             },
             ..default()
@@ -94,7 +96,7 @@ fn spawn_player(
         .insert(Name::new("Player"))
         .insert(Player {
             speed: PLAYER_SPEED,
-    current_direction: FacingDirection::Down,
+            current_direction: FacingDirection::Down,
             hitbox_size: 32.0,
             is_moving: false,
             just_moved: false,
@@ -109,7 +111,12 @@ fn spawn_player(
             timer: (Timer::from_seconds(0.1, true))
         })
         .insert(YSort(300.0))
-        .insert(Collider);
+        // .insert(Collider)
+        .insert(RigidBody::Dynamic)
+        .insert(Collider::cuboid(16.0, 16.0))
+        .insert(Restitution {coefficient: 0.0, combine_rule: CoefficientCombineRule::Average})
+        .insert(GravityScale(0.0))
+        .insert(LockedAxes::ROTATION_LOCKED);
 }
 
 fn player_walks(

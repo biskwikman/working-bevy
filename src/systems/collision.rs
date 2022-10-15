@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::sprite::collide_aabb::collide;
+use bevy::sprite::collide_aabb::{collide, Collision};
 use crate::components::player::Player;
 
 use crate::components::collision::{Collider, CollisionEvent};
@@ -28,8 +28,9 @@ fn check_player_collision (
             player_transform.scale.truncate(),
         );
         if collision.is_some() {
-            eprintln!("collide");
+            eprintln!("{:?}", collision);
             collision_event.send_default();
+
         }
     }
 }

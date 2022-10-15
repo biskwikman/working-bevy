@@ -3,6 +3,7 @@ use bevy::prelude::*;
 use bevy::render::texture::ImageSettings;
 use bevy::window::PresentMode;
 use bevy_ecs_ldtk::prelude::*;
+use bevy_rapier2d::prelude::*;
 
 mod components;
 mod systems;
@@ -13,8 +14,7 @@ use systems::camera::CameraPlugin;
 use systems::debug::DebugPlugin;
 use systems::input::InputPlugin;
 use systems::npc::NpcPlugin;
-use systems::collision::CollidePlugin;
-// use systems::ascii::AsciiPlugin;
+// use systems::collision::CollidePlugin;
 
 pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
 pub const TILE_SIZE: f32 = 0.2;
@@ -38,6 +38,8 @@ fn main() {
             resizable: false,
             ..Default::default()
         })
+        .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
+        // .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(CameraPlugin)
         .add_startup_system(setup)
         .add_plugins(DefaultPlugins)
@@ -48,8 +50,8 @@ fn main() {
         .add_plugin(DebugPlugin)
         // .add_plugin(TileMapPlugin)
         .add_plugin(InputPlugin)
+        // .add_plugin(CollidePlugin)
         .add_plugin(GraphicsPlugin)
-        .add_plugin(CollidePlugin)
         .run();
 }
 
