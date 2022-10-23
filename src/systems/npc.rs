@@ -32,6 +32,6 @@ fn spawn_npc (
         .insert(YSort(300.0))
         // .insert(Collider)
         .insert(RigidBody::Fixed)
-        .insert(Collider::cuboid(16.0, 16.0))
+        .insert(Collider::cuboid(14.0, 14.0))
         .insert(GravityScale(0.0));
 }

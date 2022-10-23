@@ -14,20 +14,20 @@ use systems::camera::CameraPlugin;
 use systems::debug::DebugPlugin;
 use systems::input::InputPlugin;
 use systems::npc::NpcPlugin;
-// use systems::collision::CollidePlugin;
+use systems::menus::start_menu::StartMenuPlugin;
 
 pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
 pub const TILE_SIZE: f32 = 0.2;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
 pub enum GameState {
-    StartMenu,
-    Overworld,
-    Combat,
+    MainMenu,
+    InGame,
 }
 
 fn main() {
     App::new()
+        .add_state(GameState::MainMenu)
         .insert_resource(ImageSettings::default_nearest())
         .insert_resource(ClearColor(CLEAR))
         .insert_resource(WindowDescriptor {
@@ -50,8 +50,8 @@ fn main() {
         .add_plugin(DebugPlugin)
         // .add_plugin(TileMapPlugin)
         .add_plugin(InputPlugin)
-        // .add_plugin(CollidePlugin)
         .add_plugin(GraphicsPlugin)
+        .add_plugin(StartMenuPlugin)
         .run();
 }
 

@@ -113,8 +113,8 @@ fn spawn_player(
         .insert(YSort(300.0))
         // .insert(Collider)
         .insert(RigidBody::Dynamic)
-        .insert(Collider::cuboid(16.0, 16.0))
-        .insert(Restitution {coefficient: 0.0, combine_rule: CoefficientCombineRule::Average})
+        .insert(Collider::cuboid(15.0, 16.0))
+        // .insert(Restitution {coefficient: 0.0, combine_rule: CoefficientCombineRule::Average})
         .insert(GravityScale(0.0))
         .insert(LockedAxes::ROTATION_LOCKED);
 }
