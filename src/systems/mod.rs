@@ -1,3 +1,4 @@
+pub mod game;
 pub mod menus;
 pub mod camera;
 pub mod debug;

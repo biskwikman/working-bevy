@@ -15,9 +15,9 @@ use systems::debug::DebugPlugin;
 use systems::input::InputPlugin;
 use systems::npc::NpcPlugin;
 use systems::menus::start_menu::StartMenuPlugin;
+use components::global::CLEAR;
+use components::global::TILE_SIZE;
 
-pub const CLEAR: Color = Color::rgb(0.1, 0.1, 0.1);
-pub const TILE_SIZE: f32 = 0.2;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
 pub enum GameState {
@@ -39,7 +39,6 @@ fn main() {
             ..Default::default()
         })
         .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
-        // .add_plugin(RapierDebugRenderPlugin::default())
         .add_plugin(CameraPlugin)
         .add_startup_system(setup)
         .add_plugins(DefaultPlugins)
