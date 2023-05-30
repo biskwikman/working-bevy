@@ -8,49 +8,38 @@ use bevy_rapier2d::prelude::*;
 mod components;
 mod systems;
 
-use systems::graphics::GraphicsPlugin;
-use systems::player::PlayerPlugin;
-use systems::camera::CameraPlugin;
+use systems::game::graphics::GraphicsPlugin;
+use systems::game::player::PlayerPlugin;
+use systems::game::camera::CameraPlugin;
 use systems::debug::DebugPlugin;
 use systems::input::InputPlugin;
 use systems::npc::NpcPlugin;
 use systems::menus::start_menu::StartMenuPlugin;
 use components::global::CLEAR;
 use components::global::TILE_SIZE;
+use components::global::GameState;
+use systems::game::GamePlugin;
 
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Copy)]
-pub enum GameState {
-    MainMenu,
-    InGame,
-}
 
 fn main() {
     App::new()
         .add_state(GameState::MainMenu)
         .insert_resource(ImageSettings::default_nearest())
         .insert_resource(ClearColor(CLEAR))
-        .insert_resource(WindowDescriptor {
-            width: 1600.0,
-            height: 900.0,
-            title: "Working".to_string(),
-            present_mode: PresentMode::Fifo,
-            resizable: false,
-            ..Default::default()
-        })
-        .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
-        .add_plugin(CameraPlugin)
+        // .insert_resource(WindowDescriptor {
+        //     width: 1600.0,
+        //     height: 900.0,
+        //     title: "Working".to_string(),
+        //     present_mode: PresentMode::Fifo,
+        //     resizable: false,
+        //     ..Default::default()
+        // })
+        .add_plugin(GamePlugin)
         .add_startup_system(setup)
-        .add_plugins(DefaultPlugins)
         .add_plugin(LdtkPlugin)
         .insert_resource(LevelSelection::Index(0))
-        .add_plugin(PlayerPlugin)
-        .add_plugin(NpcPlugin)
         .add_plugin(DebugPlugin)
-        // .add_plugin(TileMapPlugin)
         .add_plugin(InputPlugin)
-        .add_plugin(GraphicsPlugin)
-        .add_plugin(StartMenuPlugin)
         .run();
 }
 

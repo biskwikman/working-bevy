@@ -3,10 +3,8 @@ use leafwing_input_manager::prelude::*;
 use leafwing_input_manager::{errors::NearlySingularConversion, orientation::Direction};
 use bevy_rapier2d::prelude::*;
 
-// use crate::components::collision::Collider;
 use crate::components::player::*;
 use crate::components::textures::GraphicsHandles;
-// use crate::components::collision::CollisionEvent;
 use crate::systems::input::default_input_map;
 use crate::systems::graphics::YSort;
 use crate::components::global::TILE_SIZE;
@@ -114,6 +112,7 @@ fn spawn_player(
         // .insert(Collider)
         .insert(RigidBody::Dynamic)
         .insert(Collider::cuboid(15.0, 16.0))
+        .insert(ActiveEvents::COLLISION_EVENTS)
         // .insert(Restitution {coefficient: 0.0, combine_rule: CoefficientCombineRule::Average})
         .insert(GravityScale(0.0))
         .insert(LockedAxes::ROTATION_LOCKED);

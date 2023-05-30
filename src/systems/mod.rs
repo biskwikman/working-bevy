@@ -6,6 +6,7 @@ pub mod graphics;
 pub mod input;
 pub mod player;
 pub mod npc;
+// pub mod collision;
 
 pub use camera::*;
 pub use debug::*;
