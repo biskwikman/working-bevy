@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-use bevy::render::camera::ScalingMode;
 use crate::components::player::Player;
 use crate::components::camera::Camera;
 
@@ -18,13 +17,14 @@ impl Plugin for CameraPlugin {
 pub fn spawn_player_camera(mut commands: Commands) {
     let camera_view_factor = 50.0;
     commands
-        .spawn_bundle(Camera2dBundle {
+        .spawn(Camera2dBundle {
             projection: OrthographicProjection {
-                top: camera_view_factor,
-                bottom: -camera_view_factor,
-                right: camera_view_factor * RESOLUTION,
-                left: -camera_view_factor * RESOLUTION,
-                scaling_mode: ScalingMode::None,
+                // top: camera_view_factor,
+                // bottom: -camera_view_factor,
+                // right: camera_view_factor * RESOLUTION,
+                // left: -camera_view_factor * RESOLUTION,
+                area: Rect::new(-camera_view_factor * RESOLUTION, -camera_view_factor, camera_view_factor * RESOLUTION, camera_view_factor,),
+                // scaling_mode: ScalingMode::Fixed,
                 ..default()
             },
             ..default()

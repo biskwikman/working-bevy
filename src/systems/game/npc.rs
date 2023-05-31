@@ -4,7 +4,7 @@ use bevy_rapier2d::prelude::*;
 // use crate::components::collision::Collider;
 use crate::components::textures::GraphicsHandles;
 use crate::components::npc::Npc;
-use crate::systems::graphics::YSort;
+use crate::systems::game::graphics::YSort;
 
 pub struct NpcPlugin;
 
@@ -19,7 +19,7 @@ fn spawn_npc (
     graphics: Res<GraphicsHandles>,
 ) {
     commands
-        .spawn_bundle(SpriteBundle {
+        .spawn(SpriteBundle {
             texture: graphics.npcs.clone(),
             transform: Transform {
                 translation: Vec3::new(5.0, 0.0, 900.0),

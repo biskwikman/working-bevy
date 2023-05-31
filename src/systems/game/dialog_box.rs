@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_rapier2d::prelude::{ContactForceEvent, CollisionEvent};
+use bevy_rapier2d::prelude::CollisionEvent;
 use crate::components::player::Player;
 
 pub struct DialogBoxPlugin;
@@ -20,8 +20,8 @@ fn build_dialog_box(
     asset_server: &Res<AssetServer>,
 ) -> Entity {
     let dialog_box_entity = commands
-        .spawn_bundle(NodeBundle {
-            color: Color::RED.into(),
+        .spawn(NodeBundle {
+            background_color: Color::RED.into(),
             ..default()
         })
         .id();
