@@ -3,20 +3,20 @@ use bevy::prelude::*;
 use crate::components::textures::GraphicsHandles;
 use crate::components::player::{PlayerAnimations, AnimatedSprite, Player, FacingDirection, PlayerWalk};
 
-use super::debug::ENABLE_INSPECTOR;
+// use crate::systems::debug::ENABLE_INSPECTOR;
 
 pub struct GraphicsPlugin;
 
 impl Plugin for GraphicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system_to_stage(StartupStage::PreStartup, load_graphics)
+        app.add_startup_system(load_graphics.in_base_set(StartupSet::PreStartup))
             .add_event::<PlayerWalk>()
             .add_system(animate_player)
             .add_system(animate_sprites)
             .add_system(y_sort);
-        if ENABLE_INSPECTOR {
-            app.register_type::<AnimatedSprite>();
-        }
+        // if ENABLE_INSPECTOR {
+        //     app.register_type::<AnimatedSprite>();
+        // }
     }
 }
 
@@ -38,8 +38,8 @@ fn load_graphics(
     // Load main char sheet
     let main_char_sheet = assets.load("textures/main-char-sheet.png");
     let main_char_atlas =
-        TextureAtlas::from_grid_with_padding(
-            main_char_sheet, Vec2::new(32.0, 48.0), 10, 1, Vec2::splat(0.0), Vec2::ZERO
+        TextureAtlas::from_grid(
+            main_char_sheet, Vec2::new(32.0, 48.0), 10, 1, Some(Vec2::splat(0.0)), None
         );
     let character_handle = atlases.add(main_char_atlas);
 
@@ -53,8 +53,8 @@ fn load_graphics(
 
     let image = assets.load("tiles/basictiles.png");
     let atlas =
-        TextureAtlas::from_grid_with_padding(
-            image, Vec2::splat(16.0), 8, 15, Vec2::splat(2.0), Vec2::ZERO
+        TextureAtlas::from_grid(
+            image, Vec2::splat(16.0), 8, 15, Some(Vec2::splat(2.0)), None
         );
     let tile_handle = atlases.add(atlas);
 

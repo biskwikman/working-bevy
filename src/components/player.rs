@@ -1,11 +1,10 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
-use bevy_inspector_egui::Inspectable;
 use leafwing_input_manager::orientation::Direction;
 
 pub const PLAYER_SPEED: f32 = 200.0;
 
-#[derive(Component, Inspectable, Debug)]
+#[derive(Component, Resource, Debug)]
 pub struct Player {
     pub speed: f32,
     pub current_direction: FacingDirection,
@@ -15,6 +14,7 @@ pub struct Player {
     pub active: bool,
 }
 
+#[derive(Resource)]
 pub struct PlayerAnimations {
     pub walk_up: Vec<usize>,
     pub walk_down: Vec<usize>,
@@ -26,7 +26,7 @@ pub struct PlayerAnimations {
     pub face_right: Vec<usize>,
 }
 
-#[derive(Debug, Inspectable)]
+#[derive(Debug)]
 pub enum FacingDirection {
     Up,
     Down,
@@ -41,7 +41,7 @@ pub struct AnimatedSprite {
     pub timer: Timer,
 }
 
-#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Inspectable, Debug)]
+#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Debug)]
 pub enum Action {
     // Movement
     Up,
@@ -54,4 +54,11 @@ pub enum Action {
 
 pub struct PlayerWalk {
     pub direction: Direction
+}
+
+#[derive(Bundle)]
+pub struct PlayerBundle {
+    pub player: Player,
+    #[bundle]
+    pub input_manager: InputManagerBundle<Action>
 }

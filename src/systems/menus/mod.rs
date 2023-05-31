@@ -1,16 +1,18 @@
-pub mod start_menu;
-pub use start_menu::*;
+// pub mod start_menu;
+// pub use start_menu::*;
 
 use bevy::{prelude::*, app::AppExit};
 use crate::GameState;
 
 pub struct MainMenuPlugin;
 
+#[derive(Resource)]
 struct MainMenuData {
     camera_entity: Entity,
     ui_root: Entity,
 }
 
+#[derive(Resource)]
 struct MenuMaterials {
     root: Handle<ColorMaterial>,
     border: Handle<ColorMaterial>,

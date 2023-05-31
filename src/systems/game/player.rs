@@ -3,21 +3,16 @@ use leafwing_input_manager::prelude::*;
 use leafwing_input_manager::{errors::NearlySingularConversion, orientation::Direction};
 use bevy_rapier2d::prelude::*;
 
-// use crate::components::collision::Collider;
 use crate::components::player::*;
 use crate::components::textures::GraphicsHandles;
-// use crate::components::collision::CollisionEvent;
-use crate::systems::input::default_input_map;
-use crate::systems::graphics::YSort;
-use crate::TILE_SIZE;
+use crate::systems::game::graphics::YSort;
+use crate::components::global::TILE_SIZE;
 
 pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_plugin(bevy::input::InputPlugin)
-            .add_plugin(InputManagerPlugin::<Action>::default())
             .add_startup_system(spawn_player)
             .add_event::<PlayerWalk>()
             .add_system(player_walks)
@@ -64,7 +59,7 @@ fn face_player(
     }
 }
 
-fn set_player_is_moving(mut player_query: Query<(&mut Player, ChangeTrackers<Transform>)>)
+fn set_player_is_moving(mut player_query: Query<(&mut Player, Ref<Transform>)>)
     {
     for (mut player, trackers) in player_query.iter_mut() {
         if trackers.is_changed() {
@@ -81,10 +76,9 @@ fn spawn_player(
     animations: Res<PlayerAnimations>, 
 ) {
     let sprite = TextureAtlasSprite::new(animations.walk_down[0]);
-    // sprite.custom_size = Some(Vec2::new(0.6, 0.9));
 
     commands
-        .spawn_bundle(SpriteSheetBundle {
+        .spawn(SpriteSheetBundle {
             sprite,
             texture_atlas: graphics.characters.clone(),
             transform: Transform {
@@ -92,28 +86,35 @@ fn spawn_player(
                 ..default()
             },
             ..default()
-    })
+        })
         .insert(Name::new("Player"))
-        .insert(Player {
-            speed: PLAYER_SPEED,
-            current_direction: FacingDirection::Down,
-            hitbox_size: 32.0,
-            is_moving: false,
-            just_moved: false,
-            active: true,
+        .insert(PlayerBundle {
+            player: Player {
+                speed: PLAYER_SPEED,
+                current_direction: FacingDirection::Down,
+                hitbox_size: 32.0,
+                is_moving: false,
+                just_moved: false,
+                active: true,
+            },
+            input_manager: InputManagerBundle {
+                input_map: PlayerBundle::default_input_map(),
+                ..default()
+            }
         })
-        .insert_bundle(InputManagerBundle {
-            input_map: default_input_map(),
-            action_state: ActionState::default(),
-        })
+        // .insert(InputManagerBundle {
+        //     input_map: PlayerBundle::default_input_map(),
+        //     action_state: ActionState::default(),
+        // })
         .insert(AnimatedSprite {
             current_frame: 0,
-            timer: (Timer::from_seconds(0.1, true))
+            timer: (Timer::from_seconds(0.1, TimerMode::Repeating))
         })
         .insert(YSort(300.0))
         // .insert(Collider)
         .insert(RigidBody::Dynamic)
         .insert(Collider::cuboid(15.0, 16.0))
+        .insert(ActiveEvents::COLLISION_EVENTS)
         // .insert(Restitution {coefficient: 0.0, combine_rule: CoefficientCombineRule::Average})
         .insert(GravityScale(0.0))
         .insert(LockedAxes::ROTATION_LOCKED);
