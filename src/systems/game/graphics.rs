@@ -14,9 +14,6 @@ impl Plugin for GraphicsPlugin {
             .add_system(animate_player)
             .add_system(animate_sprites)
             .add_system(y_sort);
-        // if ENABLE_INSPECTOR {
-        //     app.register_type::<AnimatedSprite>();
-        // }
     }
 }
 
