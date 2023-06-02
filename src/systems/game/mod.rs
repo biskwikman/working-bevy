@@ -7,12 +7,16 @@ pub mod dialog_box;
 pub mod graphics;
 pub mod npc;
 pub mod player;
+pub mod game_menu;
 
 pub use camera::*;
 pub use dialog_box::*;
 pub use graphics::*;
 pub use npc::*;
 pub use player::*;
+pub use game_menu::*;
+
+use crate::components::overworld::OverworldState;
 
 pub struct GamePlugin;
 
@@ -20,11 +24,13 @@ impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
        app
             .insert_resource(LevelSelection::Index(0))
+            .add_state::<OverworldState>()
             .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0))
             .add_plugin(CameraPlugin)
             .add_plugin(DialogBoxPlugin)
             .add_plugin(GraphicsPlugin)
             .add_plugin(NpcPlugin)
-            .add_plugin(PlayerPlugin);
+            .add_plugin(PlayerPlugin)
+            .add_plugin(GameMenuPlugin);
     }
 }

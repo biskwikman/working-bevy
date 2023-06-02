@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-// use crate::components::collision::Collider;
 use crate::components::textures::GraphicsHandles;
 use crate::components::npc::Npc;
 use crate::systems::game::graphics::YSort;
@@ -30,7 +29,6 @@ fn spawn_npc (
         .insert(Name::new("Talker"))
         .insert(Npc)
         .insert(YSort(300.0))
-        // .insert(Collider)
         .insert(RigidBody::Fixed)
         .insert(Collider::cuboid(14.0, 14.0))
         .insert(GravityScale(0.0));
