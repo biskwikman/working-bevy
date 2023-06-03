@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::components::global::GameState;
 use crate::components::player::Player;
 use crate::components::npc::Npc;
 use crate::components::overworld::OverworldState;
@@ -9,8 +10,13 @@ pub struct DialogBoxPlugin;
 impl Plugin for DialogBoxPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_system(talk)
-            .add_system(despawn_dialog_box);
+            .add_systems(
+                (
+                    talk,
+                    despawn_dialog_box
+                )
+                .in_set(OnUpdate(GameState::InGame))
+            );
     }
 }
 

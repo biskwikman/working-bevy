@@ -9,7 +9,7 @@ mod systems;
 
 
 use systems::input::InputPlugin;
-use components::global::CLEAR;
+use components::global::{CLEAR, GameState};
 use systems::game::GamePlugin;
 
 
@@ -17,6 +17,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugin(WorldInspectorPlugin::new())
+        .add_state::<GameState>()
         .insert_resource(ClearColor(CLEAR))
         .add_plugin(GamePlugin)
         .add_startup_system(setup)

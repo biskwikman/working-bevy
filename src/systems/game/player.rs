@@ -3,10 +3,11 @@ use leafwing_input_manager::prelude::*;
 use leafwing_input_manager::{errors::NearlySingularConversion, orientation::Direction};
 use bevy_rapier2d::prelude::*;
 
+use crate::components::overworld::OverworldState;
 use crate::components::player::*;
 use crate::components::textures::GraphicsHandles;
 use crate::systems::game::graphics::YSort;
-use crate::components::global::TILE_SIZE;
+use crate::components::global::{TILE_SIZE, GameState};
 
 pub struct PlayerPlugin;
 
@@ -15,10 +16,16 @@ impl Plugin for PlayerPlugin {
         app
             .add_startup_system(spawn_player)
             .add_event::<PlayerWalk>()
-            .add_system(player_walks)
-            .add_system(move_player.after(player_walks))
-            .add_system(face_player.after(player_walks))
-            .add_system(set_player_is_moving.after(move_player));
+            .add_systems(
+                (
+                    player_walks,
+                    move_player,
+                    face_player,
+                    set_player_is_moving,
+                ).chain()
+                .in_set(OnUpdate(GameState::InGame))
+                .in_set(OnUpdate(OverworldState::FreeRoam))
+            );
     }
 }
 
