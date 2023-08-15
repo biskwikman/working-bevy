@@ -10,12 +10,12 @@ pub struct DialogBoxPlugin;
 impl Plugin for DialogBoxPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_systems(
+            .add_systems(Update,
                 (
                     talk,
                     despawn_dialog_box
                 )
-                .in_set(OnUpdate(GameState::InGame))
+                .run_if(in_state(GameState::InGame))
             );
     }
 }
@@ -30,13 +30,14 @@ fn spawn_dialog_box(
     let parent_node = (
         NodeBundle {
             style: Style {
-                size: Size::new(Val::Percent(80.0), Val::Percent(30.0)),
+                width: Val::Percent(80.0), 
+                height: Val::Percent(30.0),
                 align_self: AlignSelf::FlexEnd,
                 align_items: AlignItems::FlexStart,
                 justify_content: JustifyContent::FlexStart,
                 flex_direction: FlexDirection::Row,
                 position_type: PositionType::Absolute,
-                position: UiRect::left(Val::Percent(10.0)),
+                left: Val::Percent(10.0),
                 margin: UiRect::bottom(Val::Percent(4.0)),
                 padding: UiRect::new(Val::Percent(1.0), Val::Auto, Val::Px(15.0), Val::Auto),
                 ..default()
@@ -76,7 +77,7 @@ fn despawn_dialog_box(
     overworld_state_current: Res<State<OverworldState>>,
     
 ) {
-    if input.just_pressed(KeyCode::E) && overworld_state_current.0 == OverworldState::Dialog {
+    if input.just_pressed(KeyCode::E) && overworld_state_current.get() == &OverworldState::Dialog {
         for dialog in &dialog {
             println!("{:?}", dialog);
             commands.entity(dialog).despawn_recursive();
@@ -102,7 +103,7 @@ fn talk(
     
     for (npc, _entity, _id) in &npcs {
         if Vec2::distance(player.translation.truncate(), npc.translation.truncate()) < 40.0 
-            && overworld_state_current.0 == OverworldState::FreeRoam {
+            && overworld_state_current.get() == &OverworldState::FreeRoam {
                 overworld_state.set(OverworldState::Dialog);
                 spawn_dialog_box(
                     &mut commands, 

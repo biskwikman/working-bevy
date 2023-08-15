@@ -14,17 +14,17 @@ pub struct PlayerPlugin;
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_startup_system(spawn_player)
+            .add_systems(Startup, spawn_player)
             .add_event::<PlayerWalk>()
-            .add_systems(
+            .add_systems(Update, 
                 (
                     player_walks,
                     move_player,
                     face_player,
                     set_player_is_moving,
                 ).chain()
-                .in_set(OnUpdate(GameState::InGame))
-                .in_set(OnUpdate(OverworldState::FreeRoam))
+                .run_if(in_state(GameState::InGame))
+                .run_if(in_state(OverworldState::FreeRoam))
             );
     }
 }
@@ -89,7 +89,7 @@ fn spawn_player(
             sprite,
             texture_atlas: graphics.characters.clone(),
             transform: Transform {
-                translation: Vec3::new(-30.0, 0.0, 900.0),
+                translation: Vec3::new(70.0, 40.0, 900.0),
                 ..default()
             },
             ..default()
@@ -109,20 +109,14 @@ fn spawn_player(
                 ..default()
             }
         })
-        // .insert(InputManagerBundle {
-        //     input_map: PlayerBundle::default_input_map(),
-        //     action_state: ActionState::default(),
-        // })
         .insert(AnimatedSprite {
             current_frame: 0,
             timer: (Timer::from_seconds(0.1, TimerMode::Repeating))
         })
         .insert(YSort(300.0))
-        // .insert(Collider)
         .insert(RigidBody::Dynamic)
         .insert(Collider::cuboid(15.0, 16.0))
         .insert(ActiveEvents::COLLISION_EVENTS)
-        // .insert(Restitution {coefficient: 0.0, combine_rule: CoefficientCombineRule::Average})
         .insert(GravityScale(0.0))
         .insert(LockedAxes::ROTATION_LOCKED);
 }

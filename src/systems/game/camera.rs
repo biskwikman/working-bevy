@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::render::camera::ScalingMode;
 use crate::components::player::Player;
 use crate::components::camera::Camera;
 
@@ -9,21 +10,23 @@ pub struct CameraPlugin;
 impl Plugin for CameraPlugin {
     fn build(&self, app: &mut App) {
         app
-            .add_startup_system(spawn_player_camera)
-            .add_system(camera_follow_player);
+            .add_systems(Startup, spawn_player_camera)
+            .add_systems(Update, camera_follow_player);
     }
 }
 
 pub fn spawn_player_camera(mut commands: Commands) {
-    let camera_view_factor = 50.0;
+
+    let mut camera = Camera2dBundle::default();
+
+    camera.projection.scaling_mode = ScalingMode::AutoMin {
+        min_width: 256.0,
+        min_height: 144.0,
+    };
+
+    camera.projection.scale = 1.5;
     commands
-        .spawn(Camera2dBundle {
-            projection: OrthographicProjection {
-                area: Rect::new(-camera_view_factor * RESOLUTION, -camera_view_factor, camera_view_factor * RESOLUTION, camera_view_factor,),
-                ..default()
-            },
-            ..default()
-        })
+        .spawn(camera)
         .insert(Name::new("PlayerCamera"))
         .insert(Camera);
 }

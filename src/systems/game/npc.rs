@@ -9,7 +9,7 @@ pub struct NpcPlugin;
 
 impl Plugin for NpcPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(spawn_npc);
+        app.add_systems(Startup, spawn_npc);
     }
 }
 
@@ -21,7 +21,7 @@ fn spawn_npc (
         .spawn(SpriteBundle {
             texture: graphics.npcs.clone(),
             transform: Transform {
-                translation: Vec3::new(5.0, 0.0, 900.0),
+                translation: Vec3::new(300.0, 40.0, 900.0),
                 ..default()
             },
             ..default()

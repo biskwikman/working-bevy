@@ -9,11 +9,9 @@ pub struct GraphicsPlugin;
 
 impl Plugin for GraphicsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(load_graphics.in_base_set(StartupSet::PreStartup))
+        app.add_systems(PreStartup, load_graphics)
             .add_event::<PlayerWalk>()
-            .add_system(animate_player)
-            .add_system(animate_sprites)
-            .add_system(y_sort);
+            .add_systems(Update, (animate_player, animate_sprites, y_sort));
     }
 }
 

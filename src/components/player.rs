@@ -41,7 +41,7 @@ pub struct AnimatedSprite {
     pub timer: Timer,
 }
 
-#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Debug)]
+#[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Reflect, Debug)]
 pub enum Action {
     // Movement
     Up,
@@ -52,6 +52,7 @@ pub enum Action {
     Interact,
 }
 
+#[derive(Event)]
 pub struct PlayerWalk {
     pub direction: Direction
 }
@@ -59,6 +60,5 @@ pub struct PlayerWalk {
 #[derive(Bundle)]
 pub struct PlayerBundle {
     pub player: Player,
-    #[bundle]
     pub input_manager: InputManagerBundle<Action>
 }

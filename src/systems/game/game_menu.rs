@@ -8,9 +8,8 @@ impl Plugin for GameMenuPlugin {
     fn build(&self, app: &mut App) {
         app
             .add_plugins(DefaultNavigationPlugins)
-            .add_system(spawn_menu)
-            .add_system(despawn_menu);
-    }
+            .add_systems(Update, (spawn_menu, despawn_menu));    
+        }
 }
 
 #[derive(Component)]
@@ -23,7 +22,7 @@ fn despawn_menu(
     mut overworld_state_next: ResMut<NextState<OverworldState>>,
     game_menus: Query<Entity, With<GameMenu>>,
 ) {
-    if input.just_pressed(KeyCode::Escape) && overworld_state_current.0 == OverworldState::Menu {
+    if input.just_pressed(KeyCode::Escape) && overworld_state_current.get() == &OverworldState::Menu {
         for game_menu in &game_menus {
             commands.entity(game_menu).despawn();
         }
@@ -41,8 +40,8 @@ fn spawn_menu(
         return;
     }
 
-    if overworld_state_current.0 == OverworldState::FreeRoam {
-        let (background, buttons) = build_menu();
+    if overworld_state_current.get() == &OverworldState::FreeRoam {
+        let (background, _buttons) = build_menu();
         commands.spawn((background, GameMenu));
         overworld_state_next.set(OverworldState::Menu)
     }
@@ -52,7 +51,8 @@ fn build_menu() -> (NodeBundle, ButtonBundle) {
     let menu_background = 
         NodeBundle {
             style: Style {
-                size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+                height: Val::Percent(100.0),
+                width: Val::Percent(100.0),
                 ..Default::default()
             },
             background_color: Color::BLUE.into(),
@@ -62,8 +62,9 @@ fn build_menu() -> (NodeBundle, ButtonBundle) {
     let buttons = 
         ButtonBundle {
             style: Style {
-                size: Size::new(Val::Px(95.0), Val::Px(65.0)),
-                position: UiRect::left(Val::Percent(30.0)),
+                height: Val::Px(95.0),
+                width: Val::Px(65.0),
+                // position: UiRect::left(Val::Percent(30.0)),
                 position_type: PositionType::Absolute,
                 ..Default::default()
             },

@@ -10,7 +10,7 @@ impl Plugin for InputPlugin {
     fn build(&self, app: &mut App) {
         app
             // .add_plugin(bevy::input::InputPlugin)
-            .add_plugin(InputManagerPlugin::<Action>::default());
+            .add_plugins(InputManagerPlugin::<Action>::default());
     }
 }
 
