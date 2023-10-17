@@ -1,7 +1,9 @@
 use bevy::prelude::*;
 
+use crate::components::player::{
+    AnimatedSprite, FacingDirection, Player, PlayerAnimations, PlayerWalk,
+};
 use crate::components::textures::GraphicsHandles;
-use crate::components::player::{PlayerAnimations, AnimatedSprite, Player, FacingDirection, PlayerWalk};
 
 // use crate::systems::debug::ENABLE_INSPECTOR;
 
@@ -15,7 +17,7 @@ impl Plugin for GraphicsPlugin {
     }
 }
 
-#[derive(Component, Default, Reflect)]
+#[derive(Component, Clone, Default, Reflect)]
 #[reflect(Component)]
 pub struct YSort(pub f32);
 
@@ -32,25 +34,28 @@ fn load_graphics(
 ) {
     // Load main char sheet
     let main_char_sheet = assets.load("textures/main-char-sheet.png");
-    let main_char_atlas =
-        TextureAtlas::from_grid(
-            main_char_sheet, Vec2::new(32.0, 48.0), 10, 1, Some(Vec2::splat(0.0)), None
-        );
+    let main_char_atlas = TextureAtlas::from_grid(
+        main_char_sheet,
+        Vec2::new(32.0, 48.0),
+        10,
+        1,
+        Some(Vec2::splat(0.0)),
+        None,
+    );
     let character_handle = atlases.add(main_char_atlas);
 
     // Load Npc sheet
     let npc_image = assets.load("textures/talker-front.png");
-    // let npc_atlas = 
-    //     TextureAtlas::from_grid_with_padding(
-    //     npc_sheet, Vec2::new(32.0, 48.0), 10, 1, Vec2::splat(0.0), Vec2::ZERO
-    // );
-    // let npc_handle = atlases.add(npc_atlas);
 
     let image = assets.load("tiles/basictiles.png");
-    let atlas =
-        TextureAtlas::from_grid(
-            image, Vec2::splat(16.0), 8, 15, Some(Vec2::splat(2.0)), None
-        );
+    let atlas = TextureAtlas::from_grid(
+        image,
+        Vec2::splat(16.0),
+        8,
+        15,
+        Some(Vec2::splat(2.0)),
+        None,
+    );
     let tile_handle = atlases.add(atlas);
 
     commands.insert_resource(GraphicsHandles {
@@ -116,7 +121,8 @@ fn animate_player(
             }
             FacingDirection::Right => {
                 if player.is_moving {
-                    sprite.index = animations.walk_right[current_frame % animations.walk_right.len()];
+                    sprite.index =
+                        animations.walk_right[current_frame % animations.walk_right.len()];
                 } else {
                     sprite.index = animations.face_right[0];
                 }

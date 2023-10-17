@@ -3,8 +3,6 @@ use bevy::render::camera::ScalingMode;
 use crate::components::player::Player;
 use crate::components::camera::Camera;
 
-pub const RESOLUTION: f32 = 16.0 / 9.0;
-
 pub struct CameraPlugin;
 
 impl Plugin for CameraPlugin {

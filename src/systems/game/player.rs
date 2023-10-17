@@ -115,7 +115,10 @@ fn spawn_player(
         })
         .insert(YSort(300.0))
         .insert(RigidBody::Dynamic)
-        .insert(Collider::cuboid(15.0, 16.0))
+        .with_children(|children| {
+            children.spawn(Collider::cuboid(15.0, 8.0))
+                .insert(TransformBundle::from(Transform::from_xyz(0.0, -16.0, 0.0)));
+        })
         .insert(ActiveEvents::COLLISION_EVENTS)
         .insert(GravityScale(0.0))
         .insert(LockedAxes::ROTATION_LOCKED);

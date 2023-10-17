@@ -1,7 +1,6 @@
 #![allow(clippy::redundant_field_names)]
 use bevy::prelude::*;
 use bevy::window::WindowResolution;
-use bevy_ecs_ldtk::prelude::*;
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
 
 mod components;

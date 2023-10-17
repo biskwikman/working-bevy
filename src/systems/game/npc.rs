@@ -30,6 +30,9 @@ fn spawn_npc (
         .insert(Npc)
         .insert(YSort(300.0))
         .insert(RigidBody::Fixed)
-        .insert(Collider::cuboid(14.0, 14.0))
+        .with_children(|children| {
+            children.spawn(Collider::cuboid(15.0, 8.0))
+                .insert(TransformBundle::from(Transform::from_xyz(0.0, -16.0, 0.0)));
+        })
         .insert(GravityScale(0.0));
 }
