@@ -48,7 +48,7 @@ impl From<&EntityInstance> for ColliderBundle {
     fn from(entity_instance: &EntityInstance) -> Self {
         match entity_instance.identifier.as_ref() {
             "Door" => ColliderBundle {
-                collider: Collider::cuboid(16.0, 24.0),
+                collider: Collider::cuboid(16.0, 16.0),
                 rigid_body: RigidBody::Fixed,
                 gravity_scale: GravityScale(0.0),
             },
