@@ -6,11 +6,9 @@ use bevy_inspector_egui::quick::WorldInspectorPlugin;
 mod components;
 mod systems;
 
-
-use systems::input::InputPlugin;
-use components::global::{CLEAR, GameState};
+use components::global::{GameState, CLEAR};
 use systems::game::GamePlugin;
-
+use systems::input::InputPlugin;
 
 fn main() {
     App::new()
@@ -18,7 +16,7 @@ fn main() {
         .add_systems(Startup, setup)
         .add_plugins(WorldInspectorPlugin::new())
         .add_plugins(InputPlugin)
-        .add_state::<GameState>()
+        .init_state::<GameState>()
         .insert_resource(ClearColor(CLEAR))
         .add_plugins(GamePlugin)
         .run();

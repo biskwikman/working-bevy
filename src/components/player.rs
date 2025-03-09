@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use leafwing_input_manager::prelude::*;
-use leafwing_input_manager::orientation::Direction;
+// use leafwing_input_manager::orientation::Direction;
 
 pub const PLAYER_SPEED: f32 = 200.0;
 

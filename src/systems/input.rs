@@ -1,6 +1,8 @@
 use bevy::prelude::*;
+use bevy::utils::tracing::instrument::WithSubscriber;
+// use leafwing_input_manager::orientation::Direction;
+use bevy::math::Rot2;
 use leafwing_input_manager::prelude::*;
-use leafwing_input_manager::orientation::Direction;
 
 use crate::components::player::*;
 
@@ -15,19 +17,14 @@ impl Plugin for InputPlugin {
 }
 
 impl Action {
-    pub const DIRECTIONS: [Self; 4] = [
-        Action::Up,
-        Action::Down,
-        Action::Left,
-        Action::Right,
-    ];
+    pub const DIRECTIONS: [Self; 4] = [Action::Up, Action::Down, Action::Left, Action::Right];
 
-    pub fn direction(self) -> Option<Direction> {
+    pub fn direction(self) -> Option<Rot2> {
         match self {
-            Action::Up => Some(Direction::NORTH),
-            Action::Down => Some(Direction::SOUTH),
-            Action::Left => Some(Direction::EAST),
-            Action::Right => Some(Direction::WEST),
+            Action::Up => Some(Rot2::degrees(90.0)),
+            Action::Down => Some(Rot2::degrees(270.0)),
+            Action::Left => Some(Rot2::degrees(0.0)),
+            Action::Right => Some(Rot2::degrees(180.0)),
             _ => None,
         }
     }
@@ -44,10 +41,9 @@ impl PlayerBundle {
         // input_map.set_gamepad(Gamepad(0));
 
         // Movement
-        input_map.insert(KeyCode::Up, Up);
-        input_map.insert(KeyCode::W, Up);
-        input_map.insert(GamepadButtonType::DPadUp, Up);
-
+        input_map.insert(Up, KeyCode::ArrowUp);
+        input_map.insert(Up, KeyCode::KeyW);
+        input_map.insert(Up, GamepadButton::DPadUp);
 
         input_map.insert(KeyCode::Down, Down);
         input_map.insert(KeyCode::S, Down);
