@@ -54,7 +54,7 @@ pub enum Action {
 
 #[derive(Event)]
 pub struct PlayerWalk {
-    pub direction: Direction
+    pub direction: Rot2
 }
 
 #[derive(Bundle)]

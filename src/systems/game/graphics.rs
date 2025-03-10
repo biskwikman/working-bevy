@@ -1,5 +1,4 @@
 use bevy::prelude::*;
-
 use crate::components::player::{
     AnimatedSprite, FacingDirection, Player, PlayerAnimations, PlayerWalk,
 };
@@ -30,33 +29,31 @@ pub fn y_sort(mut query: Query<(&mut Transform, &YSort)>) {
 fn load_graphics(
     mut commands: Commands,
     assets: Res<AssetServer>,
-    mut atlases: ResMut<Assets<TextureAtlas>>,
+    mut atlases: ResMut<Assets<TextureAtlasLayout>>,
 ) {
     // Load main char sheet
     let main_char_sheet = assets.load("textures/main-char-sheet.png");
-    let main_char_atlas = TextureAtlas::from_grid(
-        main_char_sheet,
-        Vec2::new(32.0, 48.0),
+    let main_char_atlas_layout = TextureAtlasLayout::from_grid(
+        UVec2::new(32, 48),
         10,
         1,
-        Some(Vec2::splat(0.0)),
+        Some(UVec2::splat(0)),
         None,
     );
-    let character_handle = atlases.add(main_char_atlas);
+    let character_handle = atlases.add(main_char_atlas_layout);
 
     // Load Npc sheet
     let npc_image = assets.load("textures/talker-front.png");
 
     let image = assets.load("tiles/basictiles.png");
-    let atlas = TextureAtlas::from_grid(
-        image,
-        Vec2::splat(16.0),
+    let atlas_layout = TextureAtlasLayout::from_grid(
+        UVec2::splat(16),
         8,
         15,
-        Some(Vec2::splat(2.0)),
+        Some(UVec2::splat(2)),
         None,
     );
-    let tile_handle = atlases.add(atlas);
+    let tile_handle = atlases.add(atlas_layout);
 
     commands.insert_resource(GraphicsHandles {
         characters: character_handle,

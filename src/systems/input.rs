@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy::utils::tracing::instrument::WithSubscriber;
+// use bevy::utils::tracing::instrument::WithSubscriber;
 // use leafwing_input_manager::orientation::Direction;
 use bevy::math::Rot2;
 use leafwing_input_manager::prelude::*;
@@ -35,31 +35,26 @@ impl PlayerBundle {
         use Action::*;
         let mut input_map = InputMap::default();
 
-        // This is a quick and hacky solution:
-        // you should coordinate with the `Gamepads` resource to determine the correct gamepad for each player
-        // and gracefully handle disconnects
-        // input_map.set_gamepad(Gamepad(0));
-
         // Movement
         input_map.insert(Up, KeyCode::ArrowUp);
         input_map.insert(Up, KeyCode::KeyW);
         input_map.insert(Up, GamepadButton::DPadUp);
 
-        input_map.insert(KeyCode::Down, Down);
-        input_map.insert(KeyCode::S, Down);
-        input_map.insert(GamepadButtonType::DPadDown, Down);
+        input_map.insert(Down, KeyCode::ArrowDown);
+        input_map.insert(Down, KeyCode::KeyS);
+        input_map.insert(Down, GamepadButton::DPadDown);
 
-        input_map.insert(KeyCode::Left, Left);
-        input_map.insert(KeyCode::A, Left);
-        input_map.insert(GamepadButtonType::DPadLeft, Left);
+        input_map.insert(Left, KeyCode::ArrowLeft);
+        input_map.insert(Left, KeyCode::KeyA);
+        input_map.insert(Left, GamepadButton::DPadLeft);
 
-        input_map.insert(KeyCode::Right, Right);
-        input_map.insert(KeyCode::D, Right);
-        input_map.insert(GamepadButtonType::DPadRight, Right);
+        input_map.insert(Right, KeyCode::ArrowRight);
+        input_map.insert(Right, KeyCode::KeyD);
+        input_map.insert(Right, GamepadButton::DPadRight);
 
         // Abilities
-        input_map.insert(KeyCode::F, Interact);
-        input_map.insert(GamepadButtonType::East, Interact);
+        input_map.insert(Interact, KeyCode::KeyF);
+        input_map.insert(Interact, GamepadButton::East);
 
         input_map
     }
