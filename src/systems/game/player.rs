@@ -36,8 +36,10 @@ fn move_player(
 ) {
     let (player, mut transform) = player_query.single_mut();
     for ev in event_reader.read() {
-        transform.translation.x -= ev.direction.unit_vector()[0] * player.speed * TILE_SIZE * time.delta_secs();
-        transform.translation.y += ev.direction.unit_vector()[1] * player.speed * TILE_SIZE * time.delta_secs();
+        // transform.translation.x -= ev.direction.unit_vector()[0] * player.speed * TILE_SIZE * time.delta_secs();
+        // transform.translation.y += ev.direction.unit_vector()[1] * player.speed * TILE_SIZE * time.delta_secs();
+        transform.translation.x -= ev.direction.cos * player.speed * TILE_SIZE * time.delta_secs();
+        transform.translation.y += ev.direction.sin * player.speed * TILE_SIZE * time.delta_secs();
     }
 }
 
@@ -48,9 +50,10 @@ fn face_player(
     let mut player = player_query.single_mut();
 
     for ev in event_reader.read() {
-        let x = ev.direction.unit_vector()[0];
-        let y = ev.direction.unit_vector()[1];
-        let t = ev.direction.normalize
+        // let x = ev.direction.unit_vector()[0];
+        // let y = ev.direction.unit_vector()[1];
+        let x = ev.direction.cos;
+        let y = ev.direction.sin;
 
         if y > 0.0 && x == 0.0 {
             player.current_direction = FacingDirection::Up;
@@ -83,18 +86,19 @@ fn spawn_player(
     graphics: Res<GraphicsHandles>,
     animations: Res<PlayerAnimations>, 
 ) {
-    let sprite = TextureAtlas::
-        // ::new(animations.walk_down[0]);
+    // let sprite = TextureAtlas::new(animations.walk_down[0]);
 
     commands
-        .spawn(SpriteSheetBundle {
-            sprite,
-            texture_atlas: graphics.characters.clone(),
-            transform: Transform {
-                translation: Vec3::new(70.0, 40.0, 900.0),
-                ..default()
-            },
-            ..default()
+        .spawn(Sprite {
+            image: graphics.character.image,
+            texture_atlas: Some(TextureAtlas {layout: graphics.character.texture_atlas_layout, index: animations.face_down[0]}),
+            // sprite,
+            // texture_atlas: graphics.characters.clone(),
+            // transform: Transform {
+            //     translation: Vec3::new(70.0, 40.0, 900.0),
+            //     ..default()
+            // },
+            // ..default()
         })
         .insert(Name::new("Player"))
         .insert(PlayerBundle {

@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use crate::components::player::{
     AnimatedSprite, FacingDirection, Player, PlayerAnimations, PlayerWalk,
 };
-use crate::components::textures::GraphicsHandles;
+use crate::components::textures::{GraphicsBundle, GraphicsHandles};
 
 // use crate::systems::debug::ENABLE_INSPECTOR;
 
@@ -45,7 +45,7 @@ fn load_graphics(
     // Load Npc sheet
     let npc_image = assets.load("textures/talker-front.png");
 
-    let image = assets.load("tiles/basictiles.png");
+    let tile_image: Handle<Image> = assets.load("tiles/basictiles.png");
     let atlas_layout = TextureAtlasLayout::from_grid(
         UVec2::splat(16),
         8,
@@ -56,7 +56,8 @@ fn load_graphics(
     let tile_handle = atlases.add(atlas_layout);
 
     commands.insert_resource(GraphicsHandles {
-        characters: character_handle,
+        // character: character_handle,
+        character: GraphicsBundle {image: main_char_sheet, texture_atlas_layout: character_handle},
         npcs: npc_image,
         tiles: tile_handle,
     });
