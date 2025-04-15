@@ -25,8 +25,8 @@ pub struct GamePlugin;
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
        app
-            .insert_resource(LevelSelection::Index(0))
-            .add_state::<OverworldState>()
+            .insert_resource(LevelSelection::index(0))
+            .init_state::<OverworldState>()
             .add_plugins((RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(100.0), 
                             CameraPlugin, 
                             DialogBoxPlugin, 

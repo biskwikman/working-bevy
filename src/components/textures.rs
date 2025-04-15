@@ -4,7 +4,8 @@ use bevy::prelude::*;
 pub struct GraphicsHandles {
     pub character: GraphicsBundle,
     // pub character: Handle<TextureAtlasLayout>,
-    pub tiles: Handle<TextureAtlasLayout>,
+    // pub tiles: Handle<TextureAtlasLayout>,
+    pub tiles: GraphicsBundle,
     pub npcs: Handle<Image>,
 }
 

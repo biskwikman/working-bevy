@@ -15,14 +15,16 @@ impl Plugin for NpcPlugin {
 
 fn spawn_npc(mut commands: Commands, graphics: Res<GraphicsHandles>) {
     commands
-        .spawn(SpriteBundle {
-            texture: graphics.npcs.clone(),
-            transform: Transform {
+        .spawn((
+            Sprite {
+                image: graphics.npcs.clone(),
+                ..default()
+        },
+            Transform {
                 translation: Vec3::new(350.0, 40.0, 900.0),
                 ..default()
             },
-            ..default()
-        })
+        ))
         .insert(Name::new("Talker"))
         .insert(Npc)
         .insert(YSort(300.0))
@@ -30,7 +32,7 @@ fn spawn_npc(mut commands: Commands, graphics: Res<GraphicsHandles>) {
         .with_children(|children| {
             children
                 .spawn(Collider::cuboid(15.0, 8.0))
-                .insert(TransformBundle::from(Transform::from_xyz(0.0, -16.0, 0.0)));
+                .insert(Transform::from_xyz(0.0, -16.0, 0.0));
         })
         .insert(GravityScale(0.0));
 }

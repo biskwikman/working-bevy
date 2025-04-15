@@ -14,7 +14,7 @@ impl Plugin for MapsPlugin {
         app.add_plugins(LdtkPlugin)
             .add_systems(Startup, load_map)
             .add_systems(Update, (spawn_wall_collision, add_colliders))
-            .insert_resource(LevelSelection::Index(0))
+            .insert_resource(LevelSelection::index(0))
             .register_ldtk_int_cell::<WallBundle>(1)
             .register_ldtk_entity::<VendingMachineBundle>("VendingMachine")
             .register_ldtk_entity::<VendingMachineBundle>("Door");
@@ -22,21 +22,21 @@ impl Plugin for MapsPlugin {
 }
 
 fn add_colliders(mut commands: Commands, query: Query<Entity, Added<VendingMachine>>) {
-    query.for_each(|entity| {
+    query.iter().for_each(|entity| {
         commands
             .entity(entity)
             .insert(RigidBody::Fixed)
             .with_children(|children| {
                 children
                     .spawn(Collider::cuboid(24.0, 8.0))
-                    .insert(TransformBundle::from(Transform::from_xyz(0.0, -24.0, 0.0)));
+                    .insert(Transform::from_xyz(0.0, -24.0, 0.0));
             });
     })
 }
 
 fn load_map(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("ldtk/working.ldtk"),
+        ldtk_handle: LdtkProjectHandle {handle: asset_server.load("ldtk/working.ldtk")},
         ..Default::default()
     });
 }
@@ -45,8 +45,9 @@ pub fn spawn_wall_collision(
     mut commands: Commands,
     wall_query: Query<(&GridCoords, &Parent), Added<Wall>>,
     parent_query: Query<&Parent, Without<Wall>>,
-    level_query: Query<(Entity, &Handle<LdtkLevel>)>,
-    levels: Res<Assets<LdtkLevel>>,
+    level_query: Query<(Entity, &LevelIid)>,
+    projects: Query<&LdtkProjectHandle>,
+    project_assets: Res<Assets<LdtkProject>>,
 ) {
     /// Represents a wide wall that is 1 tile tall
     /// Used to spawn wall collisions
@@ -73,7 +74,7 @@ pub fn spawn_wall_collision(
     // 2. it lets us easily add the collision entities as children of the appropriate level entity
     let mut level_to_wall_locations: HashMap<Entity, HashSet<GridCoords>> = HashMap::new();
 
-    wall_query.for_each(|(&grid_coords, parent)| {
+    wall_query.iter().for_each(|(&grid_coords, parent)| {
         // An intgrid tile's direct parent will be a layer entity, not the level entity
         // To get the level entity, you need the tile's grandparent.
         // This is where parent_query comes in.
@@ -86,10 +87,10 @@ pub fn spawn_wall_collision(
     });
 
     if !wall_query.is_empty() {
-        level_query.for_each(|(level_entity, level_handle)| {
+        level_query.iter().for_each(|(level_entity, level_iid)| {
             if let Some(level_walls) = level_to_wall_locations.get(&level_entity) {
-                let level = levels
-                    .get(level_handle)
+                let level = project_assets
+                    .get(projects.single())
                     .expect("Level should be loaded by this point");
 
                 let LayerInstance {
@@ -98,10 +99,13 @@ pub fn spawn_wall_collision(
                     grid_size,
                     ..
                 } = level
-                    .level
-                    .layer_instances
-                    .clone()
-                    .expect("Level asset should have layers")[0];
+                    // .level
+                    .as_standalone()
+                    .get_loaded_level_by_iid(level_iid.get())
+                    .unwrap()
+                    .layer_instances()
+                    .clone()[0];
+                    // .expect("Level asset should have layers")[0];
 
                 // combine wall tiles into flat "plates" in each individual row
                 let mut plate_stack: Vec<Vec<Plate>> = Vec::new();

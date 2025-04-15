@@ -1,4 +1,6 @@
 use bevy::prelude::*;
+use leafwing_input_manager::prelude::*;
+use crate::components::player::Action;
 use crate::components::global::GameState;
 use crate::components::player::Player;
 use crate::components::npc::Npc;
@@ -28,36 +30,28 @@ fn spawn_dialog_box(
     let font = assets.load("fonts/DungeonFont.ttf");
 
     let parent_node = (
-        NodeBundle {
-            style: Style {
-                width: Val::Percent(80.0), 
-                height: Val::Percent(30.0),
-                align_self: AlignSelf::FlexEnd,
-                align_items: AlignItems::FlexStart,
-                justify_content: JustifyContent::FlexStart,
-                flex_direction: FlexDirection::Row,
-                position_type: PositionType::Absolute,
-                left: Val::Percent(10.0),
-                margin: UiRect::bottom(Val::Percent(4.0)),
-                padding: UiRect::new(Val::Percent(1.0), Val::Auto, Val::Px(15.0), Val::Auto),
-                ..default()
-            },
-            background_color: BackgroundColor(Color::GRAY),
+        Node {
+            width: Val::Percent(80.0), 
+            height: Val::Percent(30.0),
+            align_self: AlignSelf::FlexEnd,
+            align_items: AlignItems::FlexStart,
+            justify_content: JustifyContent::FlexStart,
+            flex_direction: FlexDirection::Row,
+            position_type: PositionType::Absolute,
+            left: Val::Percent(10.0),
+            margin: UiRect::bottom(Val::Percent(4.0)),
+            padding: UiRect::new(Val::Percent(1.0), Val::Auto, Val::Px(15.0), Val::Auto),
             ..default()
         },
+        BackgroundColor(Color::srgb(0.25, 0.25, 0.25)),
         DialogUI,
         Name::new("Dialog UI")
     );
 
     let dialog_text = (
-        TextBundle::from_section(
-            starting_text,
-            TextStyle { 
-                font: font, 
-                font_size: 36.0, 
-                color: Color::BLACK 
-            },
-        ).with_text_alignment(TextAlignment::Left),
+        Text::new(starting_text),
+        TextFont {font, font_size: 36.0, ..default()},
+        TextLayout::new_with_justify(JustifyText::Left),
         NpcText,
     );
 
@@ -71,13 +65,15 @@ fn spawn_dialog_box(
 
 fn despawn_dialog_box(
     mut commands: Commands,
-    input: Res<Input<KeyCode>>,
+    // input: Res<Input<KeyCode>>,
+    input: Query<&ActionState<Action>, With<Player>>,
     dialog: Query<Entity, With<DialogUI>>,
     mut overworld_state: ResMut<NextState<OverworldState>>,
     overworld_state_current: Res<State<OverworldState>>,
     
 ) {
-    if input.just_pressed(KeyCode::E) && overworld_state_current.get() == &OverworldState::Dialog {
+    let action_state = input.single();
+    if action_state.just_pressed(&Action::Interact) && overworld_state_current.get() == &OverworldState::Dialog {
         for dialog in &dialog {
             println!("{:?}", dialog);
             commands.entity(dialog).despawn_recursive();
@@ -91,13 +87,15 @@ fn talk(
     assets: Res<AssetServer>,
     player: Query<&Transform, With<Player>>,
     npcs: Query<(&Transform, Entity, &Npc)>,
-    input: Res<Input<KeyCode>>,
+    input: Query<&ActionState<Action>, With<Player>>,
+    // input: Res<Input<KeyCode>>,
     mut overworld_state: ResMut<NextState<OverworldState>>,
     overworld_state_current: Res<State<OverworldState>>,
 ) {
+    let action_state = input.single();
     let player = player.single();
 
-    if !input.just_pressed(KeyCode::E) {
+    if !action_state.just_pressed(&Action::Interact) {
         return;
     }
     

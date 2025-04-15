@@ -89,17 +89,17 @@ fn spawn_player(
     // let sprite = TextureAtlas::new(animations.walk_down[0]);
 
     commands
-        .spawn(Sprite {
-            image: graphics.character.image,
-            texture_atlas: Some(TextureAtlas {layout: graphics.character.texture_atlas_layout, index: animations.face_down[0]}),
-            // sprite,
-            // texture_atlas: graphics.characters.clone(),
-            // transform: Transform {
-            //     translation: Vec3::new(70.0, 40.0, 900.0),
-            //     ..default()
-            // },
-            // ..default()
-        })
+        .spawn((
+            Sprite {
+                image: graphics.character.image.clone(),
+                texture_atlas: Some(TextureAtlas {layout: graphics.character.texture_atlas_layout.clone(), index: animations.face_down[0]}),
+                ..default()
+            },
+            Transform {
+                translation: Vec3::new(70.0, 40.0, 900.0),
+                ..default()
+            }
+        ))
         .insert(Name::new("Player"))
         .insert(PlayerBundle {
             player: Player {
@@ -123,7 +123,7 @@ fn spawn_player(
         .insert(RigidBody::Dynamic)
         .with_children(|children| {
             children.spawn(Collider::cuboid(15.0, 8.0))
-                .insert(TransformBundle::from(Transform::from_xyz(0.0, -16.0, 0.0)));
+                .insert(Transform::from_xyz(0.0, -16.0, 0.0));
         })
         .insert(ActiveEvents::COLLISION_EVENTS)
         .insert(GravityScale(0.0))
@@ -136,19 +136,20 @@ fn player_walks(
 ) {
     let action_state = query.single();
     
-    let mut direction_vector = Vec2::ZERO;
+    let mut direction_vector = Rot2::degrees(0.0);
 
     for input_direction in Action::DIRECTIONS {
-        if action_state.pressed(input_direction) {
+        if action_state.pressed(&input_direction) {
             if let Some(direction) = input_direction.direction() {
-                direction_vector += Vec2::from(direction);
+                direction_vector.cos += direction.cos;
+                direction_vector.sin += direction.sin;
             }
         }
     }
     // Normalize magnitude
-    let net_direction: Result<Direction, NearlySingularConversion> = direction_vector.try_into();
+    // let net_direction: Result<Direction, NearlySingularConversion> = direction_vector.try_into();
 
-    if let Ok(direction) = net_direction {
-            event_writer.send(PlayerWalk {direction});
-    }
+    // if let Ok(direction) = direction_vector {
+            event_writer.send(PlayerWalk {direction: direction_vector});
+    // }
 }

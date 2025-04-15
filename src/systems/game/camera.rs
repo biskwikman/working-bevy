@@ -14,19 +14,19 @@ impl Plugin for CameraPlugin {
 }
 
 pub fn spawn_player_camera(mut commands: Commands) {
-
-    let mut camera = Camera2dBundle::default();
-
-    camera.projection.scaling_mode = ScalingMode::AutoMin {
-        min_width: 256.0,
-        min_height: 144.0,
-    };
-
-    camera.projection.scale = 1.5;
     commands
-        .spawn(camera)
+        .spawn(Camera2d)
         .insert(Name::new("PlayerCamera"))
-        .insert(Camera);
+        .insert(Projection::Orthographic(
+            OrthographicProjection{
+                scaling_mode: ScalingMode::AutoMin {min_width: 256.0, min_height: 144.0},
+                scale: 1.5,
+                near: Default::default(),
+                far: Default::default(),
+                viewport_origin: Default::default(),
+                area: Default::default(),
+            },
+        ));
 }
 
 pub fn camera_follow_player(

@@ -56,10 +56,9 @@ fn load_graphics(
     let tile_handle = atlases.add(atlas_layout);
 
     commands.insert_resource(GraphicsHandles {
-        // character: character_handle,
         character: GraphicsBundle {image: main_char_sheet, texture_atlas_layout: character_handle},
         npcs: npc_image,
-        tiles: tile_handle,
+        tiles: GraphicsBundle {image: tile_image, texture_atlas_layout: tile_handle},
     });
 
     commands.insert_resource(PlayerAnimations {
@@ -87,42 +86,44 @@ fn animate_sprites(mut sprites: Query<&mut AnimatedSprite>, time: Res<Time>) {
 }
 
 fn animate_player(
-    mut player_query: Query<(&mut TextureAtlasSprite, &AnimatedSprite, &Player)>,
+    mut player_query: Query<(&mut Sprite, &AnimatedSprite, &Player)>,
     animations: Res<PlayerAnimations>,
     mut event_reader: EventReader<PlayerWalk>,
 ) {
     let (mut sprite, animated_sprite, player) = player_query.single_mut();
     let current_frame = animated_sprite.current_frame;
-    let mut ev = event_reader.iter().peekable();
+    let mut ev = event_reader.read().peekable();
     if ev.peek().is_some() {
-        match player.current_direction {
-            FacingDirection::Up => {
-                if player.is_moving {
-                    sprite.index = animations.walk_up[current_frame % animations.walk_up.len()];
-                } else {
-                    sprite.index = animations.face_up[0];
+            if let Some(atlas) = &mut sprite.texture_atlas {
+            match player.current_direction {
+                FacingDirection::Up => {
+                    if player.is_moving {
+                            atlas.index = animations.walk_up[current_frame % animations.walk_up.len()];
+                    } else {
+                        atlas.index = animations.face_up[0];
+                    }
                 }
-            }
-            FacingDirection::Down => {
-                if player.is_moving {
-                    sprite.index = animations.walk_down[current_frame % animations.walk_down.len()];
-                } else {
-                    sprite.index = animations.face_down[0];
+                FacingDirection::Down => {
+                    if player.is_moving {
+                        atlas.index = animations.walk_down[current_frame % animations.walk_down.len()];
+                    } else {
+                        atlas.index = animations.face_down[0];
+                    }
                 }
-            }
-            FacingDirection::Left => {
-                if player.is_moving {
-                    sprite.index = animations.walk_left[current_frame % animations.walk_left.len()];
-                } else {
-                    sprite.index = animations.face_left[0];
+                FacingDirection::Left => {
+                    if player.is_moving {
+                        atlas.index = animations.walk_left[current_frame % animations.walk_left.len()];
+                    } else {
+                        atlas.index = animations.face_left[0];
+                    }
                 }
-            }
-            FacingDirection::Right => {
-                if player.is_moving {
-                    sprite.index =
-                        animations.walk_right[current_frame % animations.walk_right.len()];
-                } else {
-                    sprite.index = animations.face_right[0];
+                FacingDirection::Right => {
+                    if player.is_moving {
+                        atlas.index =
+                            animations.walk_right[current_frame % animations.walk_right.len()];
+                    } else {
+                        atlas.index = animations.face_right[0];
+                    }
                 }
             }
         }
